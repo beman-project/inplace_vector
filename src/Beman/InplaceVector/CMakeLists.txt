@@ -1,0 +1,30 @@
+# cmake-format: off
+# src/Beman/InplaceVector/CMakeLists.txt -*-makefile-*-
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+# cmake-format: on
+
+add_library(InplaceVector STATIC inplacevector.cpp)
+include(GNUInstallDirs)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+target_include_directories(
+        InplaceVector
+        PUBLIC
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../../include>
+            $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_LOWER_PROJECT_NAME}>
+)
+
+install(
+        TARGETS InplaceVector
+        EXPORT ${TARGETS_EXPORT_NAME}
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+string(TOLOWER ${CMAKE_PROJECT_NAME} CMAKE_LOWER_PROJECT_NAME)
+
+install(
+        DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_LOWER_PROJECT_NAME}
+        FILES_MATCHING
+        PATTERN "*.hpp")
+
+target_link_libraries(InplaceVector)
