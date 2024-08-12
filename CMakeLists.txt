@@ -10,6 +10,7 @@ project(
     DESCRIPTION "A dynamically-resizable vector with fixed capacity and embedded storage"
     LANGUAGES CXX
 )
+set(CMAKE_CXX_STANDARD 20)
 include(CTest)
 add_subdirectory(src/Beman/InplaceVector)
 
