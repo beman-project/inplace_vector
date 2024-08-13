@@ -1,4 +1,4 @@
-#include "../../../../../InplaceVector/include/Beman/InplaceVector/InplaceVector.hpp"
+#include <Beman/InplaceVector/InplaceVector.hpp>
 
 using namespace beman::InplaceVector;
 

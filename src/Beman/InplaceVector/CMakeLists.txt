@@ -8,14 +8,14 @@ add_library(InplaceVector STATIC inplacevector.cpp)
 # Include GNU install directories module
 include(GNUInstallDirs)
 
-# Add the current source directory to the include directories
+# Add the current source directory to the Include directories
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
-# Set the target include directories for the InplaceVector library
+# Set the target Include directories for the InplaceVector library
 target_include_directories(
         InplaceVector
         PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../../include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../../Include>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_LOWER_PROJECT_NAME}>
 )
 

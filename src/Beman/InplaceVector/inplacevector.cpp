@@ -1,3 +1,1 @@
-int main() {
-
-}
+#include <Beman/InplaceVector/InplaceVector.hpp>

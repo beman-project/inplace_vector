@@ -5,7 +5,7 @@
 
 # Tests
 add_executable(
-        InplaceVectorTest.test)
+        InplaceVectorTest.test InplaceVector.test.cpp)
 
 target_sources(InplaceVectorTest.test PRIVATE InplaceVector.test.cpp)
 
