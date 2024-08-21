@@ -1,23 +1,19 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-// A ContiguousContainer is a Container that stores objects in contiguous memory
-// locations.
-
 #include <algorithm>
 #include <cassert>
 #include <compare>
 #include <concepts>
-#include <iostream>
 #include <iterator>
 #include <limits>
 #include <memory>
 #include <new>
 #include <ranges>
 #include <type_traits>
-#include <vector>
 
-namespace beman::InplaceVector {
+namespace Beman::InplaceVector {
 namespace detail {
+// Exposition-only container-compatible-range
 template <typename T>
 concept container_compatible_range_impl = requires(T &&t) {
   {
@@ -27,7 +23,7 @@ concept container_compatible_range_impl = requires(T &&t) {
     std::ranges::end(t)
   } -> std::same_as<typename std::remove_reference_t<T>::iterator>;
 };
-}
+} // namespace detail
 template <typename T>
 constexpr bool container_compatible_range =
     detail::container_compatible_range_impl<T>;
@@ -35,6 +31,8 @@ constexpr bool container_compatible_range =
 template <bool Condition, typename TrueType, typename FalseType>
 using If = typename std::conditional<Condition, TrueType, FalseType>::type;
 
+// The internal size type can be smaller than std::size_t when capacity allows
+// for it.
 template <std::size_t Capacity>
 using inplace_vector_size_type =
     If<Capacity <= std::numeric_limits<uint8_t>::max(), uint8_t,
@@ -42,7 +40,7 @@ using inplace_vector_size_type =
           If<Capacity <= std::numeric_limits<uint32_t>::max(), uint32_t,
              uint64_t>>>;
 
-// Fixed capacity - no dynamic allocations
+//  Base class for inplace_vector
 template <typename T, std::size_t Capacity>
 struct inplace_vector_destruct_base {
   using size_type = std::size_t;
@@ -57,7 +55,7 @@ struct inplace_vector_destruct_base {
   inplace_vector_destruct_base(
       const inplace_vector_destruct_base
           &other) noexcept(std::is_nothrow_copy_constructible_v<T>)
-      : elems(), size_(other.size()) {}
+      : elems(), size_(other.size_) {}
 
   inplace_vector_destruct_base(
       const inplace_vector_destruct_base
@@ -750,4 +748,4 @@ public:
     x.swap(y);
   }
 };
-} // namespace beman::InplaceVector
+} // namespace Beman::InplaceVector

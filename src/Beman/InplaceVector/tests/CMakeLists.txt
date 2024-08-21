@@ -5,12 +5,12 @@
 
 # Tests
 add_executable(
-        InplaceVectorTest.test InplaceVector.test.cpp)
+        Beman.InplaceVectorTest.test InplaceVector.test.cpp)
 
-target_sources(InplaceVectorTest.test PRIVATE InplaceVector.test.cpp)
+target_sources(Beman.InplaceVectorTest.test PRIVATE InplaceVector.test.cpp)
 
-target_link_libraries(InplaceVectorTest.test PRIVATE
-        InplaceVector)
+target_link_libraries(Beman.InplaceVectorTest.test PRIVATE
+        Beman.InplaceVector)
 
 
 add_test(

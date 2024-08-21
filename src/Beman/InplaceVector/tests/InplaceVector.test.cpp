@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #include <Beman/InplaceVector/inplace_vector.hpp>
 
-using namespace beman::InplaceVector;
+using namespace Beman::InplaceVector;
 
 template <typename T> constexpr void test() {
   using vec = inplace_vector<T, 42>;
