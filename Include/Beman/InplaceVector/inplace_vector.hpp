@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
 // A ContiguousContainer is a Container that stores objects in contiguous memory
 // locations.
 
@@ -360,7 +362,8 @@ public:
     }
     const auto diff = static_cast<std::ptrdiff_t>(il.size() - this->size());
     if (diff < 0) {
-      const iterator new_end = std::copy(il.begin(), il.end(), this->begin());
+      const iterator new_end =
+          std::ranges::copy(il.begin(), il.end(), this->begin());
       std::destroy(new_end, this->end);
     } else {
       std::copy(il.begin(), il.begin() + this->size(), this->begin());
@@ -371,7 +374,7 @@ public:
   }; // freestanding-deleted
 
   // [containers.sequences.inplace.vector.access], element access
-  constexpr reference at(const size_type count) {
+  constexpr reference at(size_type count) {
     if (this->size() < count) {
       throw std::out_of_range("inplace_vector::at");
     }
@@ -551,7 +554,7 @@ public:
 
   template <class... Args>
   constexpr iterator emplace(const_iterator position, Args &&...args) {
-    const iterator pos = (iterator)(pos);
+    const iterator pos = position;
     const iterator end = this->end();
     if (this->size() == Capacity) {
       throw std::bad_alloc();
@@ -576,7 +579,7 @@ public:
     return emplace(position, std::move(x));
   }; // freestanding-deleted
   constexpr iterator insert(const_iterator position, size_type n, const T &x) {
-    const iterator pos = (iterator)position;
+    const iterator pos = position;
     const iterator end = this->end();
 
     if (this->size() + n < Capacity) {
@@ -657,7 +660,7 @@ public:
   } // freestanding-deleted
   constexpr iterator insert(const_iterator position,
                             std::initializer_list<T> il) {
-    const iterator pos = (iterator)position;
+    const iterator pos = position;
     const iterator end = this->end();
     auto count = il.size();
     if (this->size() + count < Capacity) {

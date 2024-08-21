@@ -16,7 +16,6 @@ target_include_directories(
         InplaceVector
         PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../../Include>
-        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_LOWER_PROJECT_NAME}>
 )
 
 # Install the InplaceVector library to the appropriate destination
@@ -34,7 +33,7 @@ install(
         DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_LOWER_PROJECT_NAME}
         FILES_MATCHING
-        PATTERN "*.hpp"
+        PATTERN "../../../Include/Beman/InplaceVector/inplace_vector.hpp"
 )
 
 # Link libraries to the InplaceVector target
