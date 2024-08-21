@@ -34,7 +34,7 @@ using If = typename std::conditional<Condition, TrueType, FalseType>::type;
 // The internal size type can be smaller than std::size_t when capacity allows
 // for it.
 template <std::size_t Capacity>
-using inplace_vector_size_type =
+using inplace_vector_internal_size_type =
     If<Capacity <= std::numeric_limits<uint8_t>::max(), uint8_t,
        If<Capacity <= std::numeric_limits<uint16_t>::max(), uint16_t,
           If<Capacity <= std::numeric_limits<uint32_t>::max(), uint32_t,
@@ -44,10 +44,10 @@ using inplace_vector_size_type =
 template <typename T, std::size_t Capacity>
 struct inplace_vector_destruct_base {
   using size_type = std::size_t;
-  using r_size_type = inplace_vector_size_type<Capacity>;
+  using internal_size_type = inplace_vector_internal_size_type<Capacity>;
 
   alignas(T) unsigned char elems[Capacity * sizeof(T)] = {};
-  r_size_type size_{0};
+  internal_size_type size_{0};
 
   // [containers.sequences.inplace.vector.cons], construct/copy/destroy
   constexpr inplace_vector_destruct_base() = default;
