@@ -1,5 +1,3 @@
-// A ContiguousContainer is a Container that stores objects in contiguous memory
-// locations.
 
 #include <algorithm>
 #include <cassert>
