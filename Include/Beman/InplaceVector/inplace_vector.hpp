@@ -101,7 +101,7 @@ struct inplace_vector_base : public inplace_vector_destruct_base<T, Capacity> {
     std::ranges::copy(other.begin(), other.end(), begin());
   }
   inplace_vector_base(inplace_vector_base &&other) noexcept(
-      std::is_nothrow_move_constructible_v<T>)
+      Capacity == 0 || std::is_nothrow_move_constructible_v<T>)
       : inplace_vector_destruct_base<T, Capacity>(other.size) {
     std::ranges::copy(other.begin(), other.end(), begin());
     std::destroy(other.begin(), other.end());
@@ -120,16 +120,18 @@ struct inplace_vector_base : public inplace_vector_destruct_base<T, Capacity> {
     }
     // other.size is greater than size
     else {
+      // copy other vector into the current vector until it runs ouf of size
       std::ranges::copy(other.begin(), other.begin() + size(), begin());
+      // copy the other half after the end of the current vector
       std::ranges::copy(other.begin() + size(), other.end(), end());
     }
-    change_size(diff);
+    this->size_ = other.size();
     return *this;
   }
 
   inplace_vector_base &operator=(inplace_vector_base &&other) noexcept(
-      std::is_nothrow_move_constructible_v<T> &&
-      std::is_nothrow_move_assignable_v<T>) {
+      Capacity == 0 || (std::is_nothrow_move_constructible_v<T> &&
+                        std::is_nothrow_move_assignable_v<T>)) {
     const auto diff = static_cast<std::ptrdiff_t>(other.size() - size());
     // other size is less than size
     if (diff < 0) {
@@ -140,7 +142,7 @@ struct inplace_vector_base : public inplace_vector_destruct_base<T, Capacity> {
       std::move(other, other.begin(), other.begin() + size(), begin());
       std::move(other.begin() + size(), other.end(), end());
     }
-    change_size(diff);
+    this->size_ = other.size();
     std::destroy(other.begin(), other.end());
     // reset size to zero
     other.change_size(-static_cast<std::ptrdiff_t>(other.size()));
@@ -203,7 +205,7 @@ struct inplace_vector_base : public inplace_vector_destruct_base<T, Capacity> {
   template <typename Iter>
   constexpr void uninitialized_move(Iter first, Iter last,
                                     iterator dest) noexcept {
-    std::ranges::copy(first, last, dest);
+    std::move(first, last, dest);
   }
 };
 
@@ -233,21 +235,18 @@ public:
   constexpr inplace_vector &operator=(inplace_vector &&) = default;
 
   constexpr explicit inplace_vector(const size_type size) : base(size) {
-    if (size > 0) {
-      base::uninitialized_value_construct(this->begin(), this->end());
-    }
+    base::uninitialized_value_construct(this->begin(), this->end());
   }
 
   constexpr inplace_vector(const std::size_t size, const T &value)
       : base(size) {
-    if (size > 0) {
-      base::uninitialized_fill(this->begin(), this->end(), value);
-    }
+
+    base::uninitialized_fill(this->begin(), this->end(), value);
   }
 
   template <class InputIterator>
     requires std::input_iterator<T>
-  constexpr inplace_vector(InputIterator first, InputIterator last) : base(0) {
+  constexpr inplace_vector(InputIterator first, InputIterator last) : base() {
     for (; first != last; ++first) {
       emplace_back(*first);
     }
@@ -282,12 +281,16 @@ public:
     const auto diff = static_cast<std::ptrdiff_t>(il.size() - this->size());
     // The current size is greater
     if (diff < 0) {
+      // if other.size is less than just copy normally
       const iterator new_end =
           std::ranges::copy(il.begin(), il.end(), this->begin());
+      // destroy the wasted memory
       std::destroy(new_end, this->end());
-      // The other size is greater
+      // The other size is greater than size
     } else {
+      // copy other vector into the current vector until it runs ouf of size
       std::ranges::copy(il.begin(), il.begin() + this->size(), this->begin());
+      // copy the other half after the end of the current vector
       base::uninitialized_copy(il.begin() + this->size(), il.end(),
                                this->end());
     }
@@ -359,12 +362,17 @@ public:
       throw std::bad_alloc();
     }
     const auto diff = static_cast<std::ptrdiff_t>(il.size() - this->size());
+    // other size is less than size
     if (diff < 0) {
+      // if other.size is less than just copy normally
       const iterator new_end =
           std::ranges::copy(il.begin(), il.end(), this->begin());
       std::destroy(new_end, this->end);
+      // other.size is greater than size
     } else {
+      // copy other vector into the current vector until it runs ouf of size
       std::ranges::copy(il.begin(), il.begin() + this->size(), this->begin());
+      // copy the other half after the end of the current vector
       base::uninitialized_copy(il.begin() + this->size(), il.end(),
                                this->end());
     }
