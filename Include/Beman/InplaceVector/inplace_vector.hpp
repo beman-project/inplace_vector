@@ -93,12 +93,12 @@ struct inplace_vector_base : public inplace_vector_destruct_base<T, Capacity> {
   inplace_vector_base(const inplace_vector_base &other) noexcept(
       std::is_nothrow_copy_constructible_v<T>)
       : inplace_vector_destruct_base<T, Capacity>(other.size) {
-    std::copy(other.begin(), other.end(), begin());
+    std::ranges::copy(other.begin(), other.end(), begin());
   }
   inplace_vector_base(inplace_vector_base &&other) noexcept(
       std::is_nothrow_move_constructible_v<T>)
       : inplace_vector_destruct_base<T, Capacity>(other.size) {
-    std::copy(other.begin(), other.end(), begin());
+    std::ranges::copy(other.begin(), other.end(), begin());
     std::destroy(other.begin(), other.end());
     other.size = 0;
   }
@@ -108,14 +108,15 @@ struct inplace_vector_base : public inplace_vector_destruct_base<T, Capacity> {
     const auto diff = static_cast<std::ptrdiff_t>(other.size() - size());
     // other.size is less than size
     if (diff < 0) {
-      const auto new_end = std::copy(other.begin(), other.end(), begin());
+      const auto new_end =
+          std::ranges::copy(other.begin(), other.end(), begin());
       // destroy unnecessary memory
       std::destroy(new_end, end());
     }
     // other.size is greater than size
     else {
-      std::copy(other.begin(), other.begin() + size(), begin());
-      std::copy(other.begin() + size(), other.end(), end());
+      std::ranges::copy(other.begin(), other.begin() + size(), begin());
+      std::ranges::copy(other.begin() + size(), other.end(), end());
     }
     change_size(diff);
     return *this;
@@ -191,13 +192,13 @@ struct inplace_vector_base : public inplace_vector_destruct_base<T, Capacity> {
   template <typename Iter>
   static constexpr void uninitialized_copy(Iter first, Iter last,
                                            iterator dest) noexcept {
-    std::copy(first, last, dest);
+    std::ranges::copy(first, last, dest);
   }
 
   template <typename Iter>
   constexpr void uninitialized_move(Iter first, Iter last,
                                     iterator dest) noexcept {
-    std::copy(first, last, dest);
+    std::ranges::copy(first, last, dest);
   }
 };
 
@@ -276,11 +277,12 @@ public:
     const auto diff = static_cast<std::ptrdiff_t>(il.size() - this->size());
     // The current size is greater
     if (diff < 0) {
-      const iterator new_end = std::copy(il.begin(), il.end(), this->begin());
+      const iterator new_end =
+          std::ranges::copy(il.begin(), il.end(), this->begin());
       std::destroy(new_end, this->end());
       // The other size is greater
     } else {
-      std::copy(il.begin(), il.begin() + this->size(), this->begin());
+      std::ranges::copy(il.begin(), il.begin() + this->size(), this->begin());
       base::uninitialized_copy(il.begin() + this->size(), il.end(),
                                this->end());
     }
@@ -357,7 +359,7 @@ public:
           std::ranges::copy(il.begin(), il.end(), this->begin());
       std::destroy(new_end, this->end);
     } else {
-      std::copy(il.begin(), il.begin() + this->size(), this->begin());
+      std::ranges::copy(il.begin(), il.begin() + this->size(), this->begin());
       base::uninitialized_copy(il.begin() + this->size(), il.end(),
                                this->end());
     }
@@ -628,11 +630,11 @@ public:
       InputIterator imiddle = std::next(first, to_copy);
       base::uninitialized_copy(imiddle, last, end);
       base::uninitialized_move(pos, end, middle);
-      std::copy(first, imiddle, pos);
+      std::ranges::copy(first, imiddle, pos);
     } else {
       base::uninitialized_move(end - count, end, end);
       std::move_backward(pos, end - count, end);
-      std::copy(first, last, pos);
+      std::ranges::copy(first, last, pos);
     }
   } // freestanding-deleted
   template <typename R>
