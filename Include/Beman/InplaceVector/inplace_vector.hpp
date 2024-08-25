@@ -52,7 +52,6 @@ struct inplace_vector_destruct_base {
   // [containers.sequences.inplace.vector.cons], construct/copy/destroy
   constexpr inplace_vector_destruct_base() = default;
 
-  // Todo: check this out
   inplace_vector_destruct_base(
       const inplace_vector_destruct_base
           &other) noexcept(std::is_nothrow_copy_constructible_v<T>)
