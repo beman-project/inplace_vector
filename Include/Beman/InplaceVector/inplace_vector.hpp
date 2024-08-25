@@ -52,6 +52,7 @@ struct inplace_vector_destruct_base {
   // [containers.sequences.inplace.vector.cons], construct/copy/destroy
   constexpr inplace_vector_destruct_base() = default;
 
+  // Todo: check this out
   inplace_vector_destruct_base(
       const inplace_vector_destruct_base
           &other) noexcept(std::is_nothrow_copy_constructible_v<T>)
@@ -269,9 +270,6 @@ public:
     }
   }; // freestanding-deleted
   constexpr inplace_vector &operator=(std::initializer_list<T> il) {
-    if constexpr (Capacity == 0) {
-      assert(size == 0 && "Cannot assign to inplace_vector with zero capacity");
-    }
     if (Capacity < il.size()) {
       throw std::bad_alloc();
     }
@@ -292,10 +290,8 @@ public:
 
   template <class InputIterator>
   constexpr void assign(InputIterator first, InputIterator last) {
-    if constexpr (Capacity == 0) {
-      assert(first == last &&
-             "Cannot assign to inplace_vector with zero capacity");
-      return;
+    if (Capacity < std::distance(first, last)) {
+      throw std::bad_alloc();
     }
     iterator end = this->end();
     for (iterator current = this->begin(); current != end;
@@ -317,10 +313,8 @@ public:
   constexpr void assign_range(R &&rg) {
     auto first = rg.begin();
     const auto last = rg.end();
-    if constexpr (Capacity == 0) {
-      assert(first == last &&
-             "Cannot assign to inplace_vector with zero capacity");
-      return;
+    if (Capacity < std::ranges::distance(first, last)) {
+      throw std::bad_alloc();
     }
     iterator end = this->end();
     for (iterator current = this->begin(); current != end;
@@ -354,9 +348,8 @@ public:
     this->change_size(diff);
   }; // freestanding-deleted
   constexpr void assign(std::initializer_list<T> il) {
-    if constexpr (Capacity == 0) {
-      assert(il.list() && "Cannot assign to inplace_vector with zero capacity");
-      return;
+    if (Capacity < il.size()) {
+      throw std::bad_alloc();
     }
     const auto diff = static_cast<std::ptrdiff_t>(il.size() - this->size());
     if (diff < 0) {
@@ -710,9 +703,6 @@ public:
   swap(inplace_vector &x) noexcept(Capacity == 0 ||
                                    (std::is_nothrow_swappable_v<T> &&
                                     std::is_nothrow_move_constructible_v<T>)) {
-    if constexpr (Capacity == 0) {
-      return;
-    }
     if (this->size() < x.size()) {
       const auto new_mid =
           std::swap_ranges(this->begin(), this->end(), x.begin());
