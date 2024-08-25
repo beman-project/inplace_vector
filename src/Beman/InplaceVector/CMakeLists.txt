@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 # cmake-format: on
 # Add the InplaceVector library
-add_library(Beman.InplaceVector STATIC inplacevector.cpp)
+add_library(Beman.InplaceVector STATIC inplace_vector.cpp)
 
 # Include GNU install directories module
 include(GNUInstallDirs)

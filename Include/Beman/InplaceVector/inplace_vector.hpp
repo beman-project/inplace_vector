@@ -64,14 +64,19 @@ struct inplace_vector_destruct_base {
       : elems(), size_(other.size()) {}
 
   inplace_vector_destruct_base &
-  operator=(const inplace_vector_destruct_base &) noexcept(
+  operator=(const inplace_vector_destruct_base &other) noexcept(
       std::is_nothrow_copy_constructible_v<T> &&
-      std::is_nothrow_copy_assignable_v<T>) {}
+      std::is_nothrow_copy_assignable_v<T>) {
+    size_ = other.size_;
+  }
 
   inplace_vector_destruct_base &
-  operator=(const inplace_vector_destruct_base &&) noexcept(
+  operator=(const inplace_vector_destruct_base &&other) noexcept(
       std::is_nothrow_move_constructible_v<T> &&
-      std::is_nothrow_move_assignable_v<T>) {}
+      std::is_nothrow_move_assignable_v<T>) {
+    size_ = other.size_;
+    other.size_ = nullptr;
+  }
 
   constexpr inplace_vector_destruct_base(const size_type size)
       : elems(), size_(size) {
