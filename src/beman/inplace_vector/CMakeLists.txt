@@ -1,9 +1,9 @@
 # cmake-format: off
-# src/Beman/InplaceVector/CMakeLists.txt -*-makefile-*-
+# src/beman/inplace_vector/CMakeLists.txt -*-makefile-*-
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 # cmake-format: on
-# Add the InplaceVector library
-add_library(Beman.InplaceVector STATIC inplace_vector.cpp)
+# Add the beman.inplace_vector library
+add_library(beman.inplace_vector STATIC inplace_vector.cpp)
 
 # Include GNU install directories module
 include(GNUInstallDirs)
@@ -13,14 +13,14 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Set the target Include directories for the InplaceVector library
 target_include_directories(
-        Beman.InplaceVector
+        beman.inplace_vector
         PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../../Include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../../../include>
 )
 
 # Install the InplaceVector library to the appropriate destination
 install(
-        TARGETS Beman.InplaceVector
+        TARGETS beman.inplace_vector
         EXPORT ${TARGETS_EXPORT_NAME}
         DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
@@ -33,8 +33,8 @@ install(
         DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_LOWER_PROJECT_NAME}
         FILES_MATCHING
-        PATTERN "../../../Include/Beman/InplaceVector/inplace_vector.hpp"
+        PATTERN "../../../include/beman/inplace_vector/inplace_vector.hpp"
 )
 
-# Link libraries to the InplaceVector target
-target_link_libraries(Beman.InplaceVector)
+# Link libraries to the beman.inplace_vector target
+target_link_libraries(beman.inplace_vector)

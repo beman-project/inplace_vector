@@ -11,7 +11,7 @@
 #include <ranges>
 #include <type_traits>
 
-namespace Beman::InplaceVector {
+namespace beman::inplace_vector {
 namespace detail {
 // Exposition-only container-compatible-range
 template <typename T>
@@ -752,4 +752,4 @@ public:
     x.swap(y);
   }
 };
-} // namespace Beman::InplaceVector
+} // namespace beman::inplace_vector
