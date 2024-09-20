@@ -4,6 +4,7 @@
 # cmake-format: on
 # Add the beman.inplace_vector library
 add_library(beman.inplace_vector STATIC inplace_vector.cpp)
+target_compile_features(beman.inplace_vector PRIVATE cxx_std_23)
 
 # Include GNU install directories module
 include(GNUInstallDirs)
