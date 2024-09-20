@@ -310,7 +310,7 @@ public:
         this->change_size(current - end);
         return;
       }
-      *current = *size;
+      *current = size();
     }
     for (; first != last; ++first) {
       emplace_back(*first);
@@ -341,13 +341,13 @@ public:
   }; // freestanding-deleted
   constexpr void assign(size_type n, const T &u) {
     if (Capacity == 0) {
-      assert(size == 0 && "Cannot assign to inplace_vector with zero capacity");
+      assert(size() == 0 && "Cannot assign to inplace_vector with zero capacity");
       return;
     }
     const auto diff = static_cast<std::ptrdiff_t>(n - this->size());
     if (diff < 0) {
       const pointer begin = this->begin();
-      std::fill(begin, begin + size, u);
+      std::fill(begin, begin + size(), u);
       std::destroy(begin + n, this->end());
     } else {
       const iterator end = this->end();
@@ -441,7 +441,7 @@ public:
     if (diff < 0) {
       std::destroy(this->begin() + sz, this->end());
     } else {
-      if (Capacity < size) {
+      if (Capacity < size()) {
         throw std::bad_alloc();
       }
       const iterator end = this->end();
@@ -624,7 +624,7 @@ public:
 
     if (this->size() + count > Capacity) {
       throw std::bad_alloc();
-    } else if (pos < this.begin() || end < pos) {
+    } else if (pos < this->begin() || end < pos) {
       throw std::out_of_range(
           "inplace_vector::insert(const_iterator, Iter, Iter)");
     }
