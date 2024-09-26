@@ -4,11 +4,13 @@
 #include <cassert>
 #include <compare>
 #include <concepts>
+#include <exception>
 #include <iterator>
 #include <limits>
 #include <memory>
 #include <new>
 #include <ranges>
+#include <stdexcept>
 #include <type_traits>
 
 namespace beman::inplace_vector {
@@ -239,7 +241,6 @@ public:
 
   constexpr inplace_vector(const std::size_t size, const T &value)
       : base(size) {
-
     base::uninitialized_fill(this->begin(), this->end(), value);
   }
 
@@ -341,7 +342,8 @@ public:
   }; // freestanding-deleted
   constexpr void assign(size_type n, const T &u) {
     if (Capacity == 0) {
-      assert(size() == 0 && "Cannot assign to inplace_vector with zero capacity");
+      assert(size() == 0 &&
+             "Cannot assign to inplace_vector with zero capacity");
       return;
     }
     const auto diff = static_cast<std::ptrdiff_t>(n - this->size());
