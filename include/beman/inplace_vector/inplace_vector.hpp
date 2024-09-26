@@ -4,11 +4,13 @@
 #include <cassert>
 #include <compare>
 #include <concepts>
+#include <exception>
 #include <iterator>
 #include <limits>
 #include <memory>
 #include <new>
 #include <ranges>
+#include <stdexcept>
 #include <type_traits>
 
 namespace beman::inplace_vector {
@@ -23,7 +25,7 @@ concept container_compatible_range_impl = requires(T &&t) {
     std::ranges::end(t)
   } -> std::same_as<typename std::remove_reference_t<T>::iterator>;
 };
-} // namespace detail
+}  // namespace detail
 template <typename T>
 constexpr bool container_compatible_range =
     detail::container_compatible_range_impl<T>;
@@ -62,17 +64,17 @@ struct inplace_vector_destruct_base {
           &&other) noexcept(std::is_nothrow_move_constructible_v<T>)
       : elems(), size_(other.size()) {}
 
-  inplace_vector_destruct_base &
-  operator=(const inplace_vector_destruct_base &other) noexcept(
-      std::is_nothrow_copy_constructible_v<T> &&
-      std::is_nothrow_copy_assignable_v<T>) {
+  inplace_vector_destruct_base &operator=(
+      const inplace_vector_destruct_base
+          &other) noexcept(std::is_nothrow_copy_constructible_v<T> &&
+                           std::is_nothrow_copy_assignable_v<T>) {
     size_ = other.size_;
   }
 
-  inplace_vector_destruct_base &
-  operator=(const inplace_vector_destruct_base &&other) noexcept(
-      std::is_nothrow_move_constructible_v<T> &&
-      std::is_nothrow_move_assignable_v<T>) {
+  inplace_vector_destruct_base &operator=(
+      const inplace_vector_destruct_base
+          &&other) noexcept(std::is_nothrow_move_constructible_v<T> &&
+                            std::is_nothrow_move_assignable_v<T>) {
     size_ = other.size_;
     other.size_ = nullptr;
   }
@@ -210,10 +212,10 @@ struct inplace_vector_base : public inplace_vector_destruct_base<T, Capacity> {
 
 template <class T, std::size_t Capacity>
 class inplace_vector : public inplace_vector_base<T, Capacity> {
-private:
+ private:
   using base = inplace_vector_base<T, Capacity>;
 
-public:
+ public:
   using value_type = T;
   using pointer = T *;
   using const_pointer = const T *;
@@ -239,7 +241,6 @@ public:
 
   constexpr inplace_vector(const std::size_t size, const T &value)
       : base(size) {
-
     base::uninitialized_fill(this->begin(), this->end(), value);
   }
 
@@ -272,7 +273,7 @@ public:
     if (il.size() != 0) {
       base::uninitialized_copy(il.begin(), il.end(), this->begin());
     }
-  }; // freestanding-deleted
+  };  // freestanding-deleted
   constexpr inplace_vector &operator=(std::initializer_list<T> il) {
     if (Capacity < il.size()) {
       throw std::bad_alloc();
@@ -295,7 +296,7 @@ public:
     }
     this->change_size(diff);
     return *this;
-  }; // freestanding-deleted
+  };  // freestanding-deleted
 
   template <class InputIterator>
   constexpr void assign(InputIterator first, InputIterator last) {
@@ -315,7 +316,7 @@ public:
     for (; first != last; ++first) {
       emplace_back(*first);
     }
-  }; // freestanding-deleted
+  };  // freestanding-deleted
 
   template <typename R>
     requires container_compatible_range<R>
@@ -338,10 +339,11 @@ public:
     for (; first != last; ++first) {
       emplace_back(*first);
     }
-  }; // freestanding-deleted
+  };  // freestanding-deleted
   constexpr void assign(size_type n, const T &u) {
     if (Capacity == 0) {
-      assert(size() == 0 && "Cannot assign to inplace_vector with zero capacity");
+      assert(size() == 0 &&
+             "Cannot assign to inplace_vector with zero capacity");
       return;
     }
     const auto diff = static_cast<std::ptrdiff_t>(n - this->size());
@@ -355,7 +357,7 @@ public:
       base::uninitialized_fill(end, end + diff, u);
     }
     this->change_size(diff);
-  }; // freestanding-deleted
+  };  // freestanding-deleted
   constexpr void assign(std::initializer_list<T> il) {
     if (Capacity < il.size()) {
       throw std::bad_alloc();
@@ -376,7 +378,7 @@ public:
                                this->end());
     }
     this->change_size(diff);
-  }; // freestanding-deleted
+  };  // freestanding-deleted
 
   // [containers.sequences.inplace.vector.access], element access
   constexpr reference at(size_type count) {
@@ -448,7 +450,7 @@ public:
       base::uninitialized_value_construct(end, end + diff);
     }
     this->change_size(diff);
-  }; // freestanding-deleted
+  };  // freestanding-deleted
   constexpr void resize(size_type sz, const T &c) {
     const auto diff = static_cast<std::ptrdiff_t>(sz - this->size());
     if (diff < 0) {
@@ -461,34 +463,35 @@ public:
       std::uninitialized_fill(end, end + diff, c);
     }
     this->change_size(diff);
-  }; // freestanding-deleted
+  };  // freestanding-deleted
   static constexpr void reserve(size_type sz) {
     if (Capacity < sz) {
       throw std::bad_alloc();
     }
-  }; // freestanding-deleted
+  };  // freestanding-deleted
   static constexpr void shrink_to_fit() noexcept {}
 
   // [containers.sequences.inplace.vector.modifiers], modifiers
-  template <class... Args> constexpr reference emplace_back(Args &&...args) {
+  template <class... Args>
+  constexpr reference emplace_back(Args &&...args) {
     if (this->size() == Capacity) {
       throw std::bad_alloc();
     }
     return this->unchecked_emplace_back(std::forward<Args>(args)...);
-  }; // freestanding-deleted
+  };  // freestanding-deleted
 
   constexpr reference push_back(const T &x) {
     if (this->size() == Capacity) {
       throw std::bad_alloc();
     }
     return this->unchecked_emplace_back(x);
-  }; // freestanding-deleted
+  };  // freestanding-deleted
   constexpr reference push_back(T &&x) {
     if (this->size() == Capacity) {
       throw std::bad_alloc();
     }
     return this->unchecked_emplace_back(std::move(x));
-  }; // freestanding-deleted
+  };  // freestanding-deleted
   template <typename R>
     requires container_compatible_range<T>
   constexpr void append_range(R &&rg) {
@@ -497,7 +500,7 @@ public:
     for (; first != last; ++first) {
       emplace_back(*first);
     }
-  }; // freestanding-deleted
+  };  // freestanding-deleted
   constexpr void pop_back() {
     if (!empty()) {
       const auto end = this->end();
@@ -506,23 +509,24 @@ public:
     }
   };
 
-  template <class... Args> constexpr pointer try_emplace_back(Args &&...args) {
+  template <class... Args>
+  constexpr pointer try_emplace_back(Args &&...args) {
     if (this->size() == Capacity) {
       return nullptr;
     }
     return std::addressof(
         this->unchecked_emplace_back(std::forward<Args>(args)...));
   };
-  constexpr pointer
-  try_push_back(const T &x) noexcept(std::is_nothrow_copy_constructible_v<T>) {
+  constexpr pointer try_push_back(const T &x) noexcept(
+      std::is_nothrow_copy_constructible_v<T>) {
     if (this->size() == Capacity) {
       return nullptr;
     }
     return std::addressof(this->unchecked_emplace_back(x));
   };
 
-  constexpr pointer
-  try_push_back(T &&x) noexcept(std::is_nothrow_move_constructible_v<T>) {
+  constexpr pointer try_push_back(T &&x) noexcept(
+      std::is_nothrow_move_constructible_v<T>) {
     if (this->size() == Capacity) {
       return nullptr;
     }
@@ -549,8 +553,8 @@ public:
     return *final;
   };
 
-  constexpr reference
-  unchecked_push_back(const T &x) noexcept(std::is_nothrow_constructible_v<T>) {
+  constexpr reference unchecked_push_back(const T &x) noexcept(
+      std::is_nothrow_constructible_v<T>) {
     return this->unchecked_emplace_back(x);
   };
   constexpr reference unchecked_push_back(T &&x) {
@@ -576,13 +580,13 @@ public:
       *pos = std::move(temp);
     }
     return pos;
-  }; // freestanding-deleted
+  };  // freestanding-deleted
   constexpr iterator insert(const_iterator position, const T &x) {
     return emplace(position, x);
-  }; // freestanding-deleted
+  };  // freestanding-deleted
   constexpr iterator insert(const_iterator position, T &&x) {
     return emplace(position, std::move(x));
-  }; // freestanding-deleted
+  };  // freestanding-deleted
   constexpr iterator insert(const_iterator position, size_type n, const T &x) {
     const iterator pos = position;
     const iterator end = this->end();
@@ -616,8 +620,9 @@ public:
   }
 
   template <class InputIterator>
-  constexpr inplace_vector::iterator
-  insert(const_iterator position, InputIterator first, InputIterator last) {
+  constexpr inplace_vector::iterator insert(const_iterator position,
+                                            InputIterator first,
+                                            InputIterator last) {
     const iterator pos = position;
     const iterator end = this->end();
     const auto count = std::distance(first, last);
@@ -648,7 +653,7 @@ public:
       std::move_backward(pos, end - count, end);
       std::ranges::copy(first, last, pos);
     }
-  } // freestanding-deleted
+  }  // freestanding-deleted
   template <typename R>
     requires container_compatible_range<R>
   constexpr iterator insert_range(const_iterator position, R &&rg) {
@@ -662,7 +667,7 @@ public:
     const iterator pos = position;
     std::rotate(pos, old_end, this->end());
     return pos;
-  } // freestanding-deleted
+  }  // freestanding-deleted
   constexpr iterator insert(const_iterator position,
                             std::initializer_list<T> il) {
     const iterator pos = position;
@@ -682,7 +687,7 @@ public:
       this->cange_size(count);
       return pos;
     }
-  } // freestanding-deleted
+  }  // freestanding-deleted
   constexpr iterator erase(const_iterator position) {
     const iterator pos = position;
     const iterator end = this->end();
@@ -713,10 +718,9 @@ public:
     this->change_size(first - last);
     return first;
   }
-  constexpr void
-  swap(inplace_vector &x) noexcept(Capacity == 0 ||
-                                   (std::is_nothrow_swappable_v<T> &&
-                                    std::is_nothrow_move_constructible_v<T>)) {
+  constexpr void swap(inplace_vector &x) noexcept(
+      Capacity == 0 || (std::is_nothrow_swappable_v<T> &&
+                        std::is_nothrow_move_constructible_v<T>)) {
     if (this->size() < x.size()) {
       const auto new_mid =
           std::swap_ranges(this->begin(), this->end(), x.begin());
@@ -736,14 +740,16 @@ public:
     this->change_size(static_cast<std::ptrdiff_t>(this->size()));
   }
 
-  constexpr friend bool
-  operator==(const inplace_vector &x, const inplace_vector &y) noexcept(
-      noexcept(std::equal(x.begin(), x.end(), y.begin(), y.end()))) {
+  constexpr friend bool operator==(
+      const inplace_vector &x,
+      const inplace_vector &y) noexcept(noexcept(std::equal(x.begin(), x.end(),
+                                                            y.begin(),
+                                                            y.end()))) {
     return std::equal(x.begin(), x.end(), y.begin(), y.end());
   }
 
-  constexpr friend std::compare_three_way_result<T>
-  operator<=>(const inplace_vector &x, const inplace_vector &y) {
+  constexpr friend std::compare_three_way_result<T> operator<=>(
+      const inplace_vector &x, const inplace_vector &y) {
     return std::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
   };
   constexpr friend void swap(inplace_vector &x, inplace_vector &y) noexcept(
@@ -752,4 +758,4 @@ public:
     x.swap(y);
   }
 };
-} // namespace beman::inplace_vector
+}  // namespace beman::inplace_vector
