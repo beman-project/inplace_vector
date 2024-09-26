@@ -10,7 +10,6 @@ add_executable(
 target_link_libraries(beman.inplace_vector.test PRIVATE
         beman.inplace_vector)
 
-
 add_test(
         NAME beman.inplace_vector.test
         COMMAND beman.inplace_vector.test
