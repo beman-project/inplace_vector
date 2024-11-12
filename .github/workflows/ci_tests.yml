@@ -11,21 +11,21 @@ on:
     - cron: '30 15 * * *'
 
 jobs:
-  preset-test:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        preset: []
-    name: "Preset Test: ${{ matrix.preset }}"
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup build environment
-        uses: lukka/get-cmake@latest
-        with:
-          cmakeVersion: "~3.25.0"
-          ninjaVersion: "^1.11.1"
-      - name: Run preset
-        run: cmake --workflow --preset ${{ matrix.preset }}
+  # preset-test:
+  #   runs-on: ubuntu-latest
+  #   strategy:
+  #     matrix:
+  #       preset: []
+  #   name: "Preset Test: ${{ matrix.preset }}"
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Setup build environment
+  #       uses: lukka/get-cmake@latest
+  #       with:
+  #         cmakeVersion: "~3.25.0"
+  #         ninjaVersion: "^1.11.1"
+  #     - name: Run preset
+  #       run: cmake --workflow --preset ${{ matrix.preset }}
 
   test:
     strategy:
