@@ -30,8 +30,8 @@ pre-commit run --all-files
 ```
 
 This will download and check linting rules on all files.
-Apart from Markdown files, 
-`pre-commit` will automatically format the files 
+Apart from Markdown files,
+`pre-commit` will automatically format the files
 to conform with linting rules in place.
 
 ### Run
