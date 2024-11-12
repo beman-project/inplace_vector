@@ -3,7 +3,7 @@
 A dynamically-resizable vector with fixed capacity and embedded storage
 
 This repository implements `std::inplace_vector` extension targeting C++26.
-The `beman.inplace\_vector` library aims to evaluate the stability, 
+The `beman.inplace_vector` library aims to evaluate the stability, 
 the usability, and the performance of these proposed changes before they 
 are officially adopted by WG21 into the C++ Working Draft. 
 Additionally, it allows developers to use these new features before they 
@@ -11,11 +11,11 @@ are implemented in major standard library compilers.
 
 ## Implements
 
-- [`inplace\_vector` P0843R14](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p0843r14.html)
+- [`inplace_vector` P0843R14](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2024/p0843r14.html)
 
 ## Usage
 
-> `inplace\_vector`, is a dynamically-resizable array with capacity fixed 
+> `inplace_vector`, is a dynamically-resizable array with capacity fixed 
 at compile time and contiguous inplace storage, 
 that is, the array elements are stored within the vector object itself. 
 Its API closely resembles `std::vector<T, A>`, 
