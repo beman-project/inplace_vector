@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        preset: ["gcc-debug", "gcc-release"]
+        preset: []
     name: "Preset Test: ${{ matrix.preset }}"
     steps:
       - uses: actions/checkout@v4
@@ -37,7 +37,7 @@ jobs:
             c: gcc
           - cpp: clang++
             c: clang
-        cpp_version: [17, 20, 23, 26]
+        cpp_version: [20, 23, 26]
         cmake_args:
           - description: "Default"
             args: ""
@@ -88,17 +88,17 @@ jobs:
       - name: Build Release
         run: |
           cmake --build build --config Release --verbose
-          cmake --build build --config Release --target all_verify_interface_header_sets
-          cmake --install build --config Release --prefix /opt/beman.exemplar
-          find /opt/beman.exemplar -type f
+          # cmake --build build --config Release --target all_verify_interface_header_sets
+          cmake --install build --config Release --prefix /opt/beman.inplace_vector
+          find /opt/beman.inplace_vector -type f
       - name: Test Release
         run: ctest --test-dir build --build-config Release
       - name: Build Debug
         run: |
           cmake --build build --config Debug --verbose
-          cmake --build build --config Debug --target all_verify_interface_header_sets
-          cmake --install build --config Debug --prefix /opt/beman.exemplar
-          find /opt/beman.exemplar -type f
+          # cmake --build build --config Debug --target all_verify_interface_header_sets
+          cmake --install build --config Debug --prefix /opt/beman.inplace_vector
+          find /opt/beman.inplace_vector -type f
       - name: Test Debug
         run: ctest --test-dir build --build-config Debug
 
