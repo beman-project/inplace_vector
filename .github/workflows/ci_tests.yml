@@ -89,16 +89,16 @@ jobs:
         run: |
           cmake --build build --config Release --verbose
           # cmake --build build --config Release --target all_verify_interface_header_sets
-          cmake --install build --config Release --prefix /opt/beman.inplace_vector
-          find /opt/beman.inplace_vector -type f
+          cmake --install build --config Release --prefix /tmp/beman.inplace_vector
+          find /tmp/beman.inplace_vector -type f
       - name: Test Release
         run: ctest --test-dir build --build-config Release
       - name: Build Debug
         run: |
           cmake --build build --config Debug --verbose
           # cmake --build build --config Debug --target all_verify_interface_header_sets
-          cmake --install build --config Debug --prefix /opt/beman.inplace_vector
-          find /opt/beman.inplace_vector -type f
+          cmake --install build --config Debug --prefix /tmp/beman.inplace_vector
+          find /tmp/beman.inplace_vector -type f
       - name: Test Debug
         run: ctest --test-dir build --build-config Debug
 
