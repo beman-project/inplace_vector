@@ -1,3 +1,7 @@
+<!--
+SPDX-License-Identifier: <SPDX License Expression>
+-->
+
 # beman.inplace\_vector
 
 A dynamically-resizable vector with fixed capacity and embedded storage
@@ -15,13 +19,17 @@ are implemented in major standard library compilers.
 
 ## Usage
 
-> `inplace_vector`, is a dynamically-resizable array with capacity fixed 
+### Definition in P0843
+
+> `inplace_vector` is a dynamically-resizable array with capacity fixed 
 at compile time and contiguous inplace storage, 
 that is, the array elements are stored within the vector object itself. 
 Its API closely resembles `std::vector<T, A>`, 
 making it easy to teach and learn, 
 and the inplace storage guarantee makes it useful in environments in 
 which dynamic memory allocations are undesired.
+
+### Code example
 
 ```cpp
 // TODO: Add example
@@ -74,7 +82,3 @@ Test project /.../inplace_vector/build
 Total Test time (real) =   0.01 sec
 ```
 
-
-<!--
-SPDX-License-Identifier: <SPDX License Expression>
--->
