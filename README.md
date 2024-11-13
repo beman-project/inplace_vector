@@ -14,12 +14,12 @@ A dynamically-resizable vector with fixed capacity and embedded storage
 
 ### Definition in P0843
 
-> `inplace_vector` is a dynamically-resizable array with capacity fixed 
-at compile time and contiguous inplace storage, 
-that is, the array elements are stored within the vector object itself. 
-Its API closely resembles `std::vector<T, A>`, 
-making it easy to teach and learn, 
-and the inplace storage guarantee makes it useful in environments in 
+> `inplace_vector` is a dynamically-resizable array with capacity fixed
+at compile time and contiguous inplace storage,
+that is, the array elements are stored within the vector object itself.
+Its API closely resembles `std::vector<T, A>`,
+making it easy to teach and learn,
+and the inplace storage guarantee makes it useful in environments in
 which dynamic memory allocations are undesired.
 
 ### Code example
