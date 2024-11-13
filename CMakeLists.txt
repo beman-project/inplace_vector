@@ -14,6 +14,8 @@ project(
     "A dynamically-resizable vector with fixed capacity and embedded storage"
   LANGUAGES CXX)
 
+include(GNUInstallDirs)
+
 add_library(beman.inplace_vector INTERFACE)
 target_include_directories(
   beman.inplace_vector
