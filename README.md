@@ -4,6 +4,9 @@ SPDX-License-Identifier: <SPDX License Expression>
 
 # beman.inplace\_vector
 
+![Continuous Integration Tests](https://github.com/beman-project/inplace_vector/actions/workflows/ci_tests.yml/badge.svg)
+![Code Format](https://github.com/beman-project/inplace_vector/actions/workflows/pre-commit.yml/badge.svg)
+
 A dynamically-resizable vector with fixed capacity and embedded storage
 
 ## Implements
@@ -44,7 +47,7 @@ TODO: tested platforms.
 
 #### Manual CMake Build
 
-```
+```text
 # Configure build
 $ cmake -S . -B build -DCMAKE_CXX_STANDARD=20
 -- The CXX compiler identification is GNU 11.4.0
@@ -87,7 +90,7 @@ This project use [pre-commit](https://pre-commit.com/) framework for linting.
 pip3 install pre-commit
 ```
 
-[pre-commit] can be configured to automatically triggered before git commit,
+pre-commit can be configured to automatically triggered before git commit,
 to install this functionality, run:
 
 ```bash
