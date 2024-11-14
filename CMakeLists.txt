@@ -15,6 +15,8 @@ project(
     LANGUAGES CXX
 )
 
+include(GNUInstallDirs)
+
 add_library(beman.inplace_vector INTERFACE)
 target_include_directories(
     beman.inplace_vector
