@@ -76,6 +76,10 @@ if(EXISTS cmake/Config.cmake.in)
     install(EXPORT ${TARGETS_EXPORT_NAME} FILE ${TARGETS_EXPORT_NAME}.cmake DESTINATION "${INSTALL_CONFIGDIR}"
             NAMESPACE beman::
     )
+
+set(CPACK_GENERATOR TGZ)
+include(CPack)
+
 endif()
 endblock()
 
