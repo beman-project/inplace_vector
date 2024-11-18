@@ -574,8 +574,7 @@ public:
 #ifdef __cpp_constexpr_dynamic_alloc
     auto final = std::construct_at(end(), std::forward<Args>(args)...);
 #else
-    // This is just construct_at expanded out, note this is not constexpr
-    // friendly
+    // Note placement new may not be not constexpr friendly
     auto final = ::new (end()) T(std::forward<Args>(args)...);
 #endif
     this->change_size(1);
