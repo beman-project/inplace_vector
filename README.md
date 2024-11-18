@@ -35,7 +35,7 @@ which dynamic memory allocations are undesired.
 
 ### Compiler support
 
-Building this repository requires **C++20** or later.
+Building this repository requires **C++17** or later.
 
 ### Dependencies
 
