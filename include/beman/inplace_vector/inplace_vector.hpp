@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <exception>
 #include <iterator>
@@ -54,13 +55,43 @@ using inplace_vector_internal_size_type =
           If<Capacity <= std::numeric_limits<uint32_t>::max(), uint32_t,
              uint64_t>>>;
 
+// array based storage is used so that we can satisfy constexpr requirement
+//
+// Selecting this storage type implies: std::is_trivial_v<T>
+template <typename T, std::size_t Capacity>
+struct inplace_vector_array_based_storage {
+  std::array<T, Capacity> elems;
+
+  constexpr T *begin() { return elems.data(); }
+  constexpr const T *begin() const { return elems.data(); }
+};
+
+// byte array based storage is used for non-constexpr environment, where default
+// initialization may not be available.
+//
+// Selecting this storage type implies: !std::is_trivial_v<T>
+template <typename T, std::size_t Capacity>
+struct inplace_vector_bytes_based_storage {
+  alignas(T) unsigned char elems[Capacity * sizeof(T)];
+
+  T *begin() { return std::launder(reinterpret_cast<const T *>(elems)); }
+  const T *begin() const {
+    return std::launder(reinterpret_cast<const T *>(elems));
+  }
+};
+
 //  Base class for inplace_vector
 template <typename T, std::size_t Capacity>
 struct inplace_vector_destruct_base {
   using size_type = std::size_t;
   using internal_size_type = inplace_vector_internal_size_type<Capacity>;
 
-  alignas(T) unsigned char elems[Capacity * sizeof(T)] = {};
+  using internal_storage_type =
+      std::conditional_t<std::is_trivial_v<T>,
+                         inplace_vector_array_based_storage<T, Capacity>,
+                         inplace_vector_bytes_based_storage<T, Capacity>>;
+
+  internal_storage_type elems;
   internal_size_type size_{0};
 
   // [containers.sequences.inplace.vector.cons], construct/copy/destroy
@@ -173,28 +204,27 @@ struct inplace_vector_base : public inplace_vector_destruct_base<T, Capacity> {
   constexpr bool empty() const noexcept { return this->size_ == 0; }
 
   // [containers.sequences.inplace.vector.data], data access
-  constexpr T *data() noexcept {
-    return std::launder(reinterpret_cast<T *>(this->elems));
-  }
-  constexpr const T *data() const noexcept {
-    return std::launder(reinterpret_cast<const T *>(this->elems));
-  }
+  constexpr T *data() noexcept { return this->elems.begin(); }
+  constexpr const T *data() const noexcept { return this->elems.begin(); }
 
   // [containers.sequences.inplace.vector.iterators] iterators
-  iterator begin() noexcept {
-    return std::launder(reinterpret_cast<T *>(this->elems));
+  constexpr iterator begin() noexcept {
+    if constexpr (Capacity == 0)
+      return nullptr;
+    else
+      return this->elems.begin();
   }
-  const_iterator begin() const noexcept {
-    return std::launder(reinterpret_cast<const T *>(this->elems));
+  constexpr const_iterator begin() const noexcept {
+    if constexpr (Capacity == 0)
+      return nullptr;
+    else
+      return this->elems.begin();
   }
 
-  iterator end() noexcept {
-    return std::launder(reinterpret_cast<T *>(this->elems) + this->size());
-  }
+  constexpr iterator end() noexcept { return begin() + this->size(); }
 
-  const_iterator end() const noexcept {
-    return std::launder(reinterpret_cast<const T *>(this->elems) +
-                        this->size());
+  constexpr const_iterator end() const noexcept {
+    return begin() + this->size();
   }
 
   // [containers.sequences.inplace.vector.modifiers], modifiers
