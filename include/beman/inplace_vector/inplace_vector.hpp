@@ -571,10 +571,13 @@ public:
 
   template <class... Args>
   constexpr reference unchecked_emplace_back(Args &&...args) {
-    // TODO: what is the feature flag for std::construct_at ??
-    // auto final = std::construct_at(end(), std::forward<Args>(args)...);
-    // This is just construct_at expanded out.
+#ifdef __cpp_constexpr_dynamic_alloc
+    auto final = std::construct_at(end(), std::forward<Args>(args)...);
+#else
+    // This is just construct_at expanded out, note this is not constexpr
+    // friendly
     auto final = ::new (end()) T(std::forward<Args>(args)...);
+#endif
     this->change_size(1);
     return *final;
   };
