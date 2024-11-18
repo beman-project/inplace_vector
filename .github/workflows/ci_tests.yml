@@ -37,7 +37,7 @@ jobs:
             c: gcc
           - cpp: clang++
             c: clang
-        cpp_version: [20, 23, 26]
+        cpp_version: [17, 20, 23, 26]
         cmake_args:
           - description: "Default"
             args: ""
@@ -46,6 +46,8 @@ jobs:
           - description: "ASan"
             args: "-DCMAKE_CXX_FLAGS=-fsanitize=address -fsanitize=undefined"
         include:
+          # Needs C++ 20 as C++17 selectivly disables ranges and concepts
+          # related functionalities
           - platform: ubuntu-latest
             compiler:
               cpp: g++
