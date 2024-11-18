@@ -12,5 +12,11 @@ add_test(NAME beman.inplace_vector.test COMMAND beman.inplace_vector.test)
 
 # constexpr test
 add_executable(beman.inplace_vector.constexpr_test constexpr.test.cpp)
-target_link_libraries(beman.inplace_vector.constexpr_test PRIVATE beman.inplace_vector)
-add_test(NAME beman.inplace_vector.constexpr_test COMMAND beman.inplace_vector.constexpr_test)
+target_link_libraries(
+    beman.inplace_vector.constexpr_test
+    PRIVATE beman.inplace_vector
+)
+add_test(
+    NAME beman.inplace_vector.constexpr_test
+    COMMAND beman.inplace_vector.constexpr_test
+)
