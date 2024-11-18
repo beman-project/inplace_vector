@@ -37,7 +37,7 @@ static_assert(std::invoke([]() {
 
                 return true;
               }),
-              "Should be constexpr for all 0 capacity for trivial type");
+              "0 capacity Trivial type");
 
 static_assert(std::invoke([]() {
                 inplace_vector<NonTrivial, 0> vec;
@@ -54,11 +54,12 @@ static_assert(std::invoke([]() {
                 S_ASSERT(vec.rbegin() == vec.rend());
                 S_ASSERT(vec.crbegin() == vec.crend());
 
+                // push_back
                 S_ASSERT(vec.try_push_back({}) == nullptr);
 
                 return true;
               }),
-              "Should be constexpr for all 0 capacity for non-trivial type");
+              "0 capacity Non-trivial type");
 
 static_assert(std::invoke([]() {
                 // sizes
@@ -141,7 +142,7 @@ static_assert(std::invoke([]() {
 
                 return true;
               }),
-              "Single push_back");
+              "Basic mutation");
 
 int main() {
   // compile means pass

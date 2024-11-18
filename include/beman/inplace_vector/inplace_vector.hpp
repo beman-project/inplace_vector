@@ -85,7 +85,6 @@ template <typename T, std::size_t Capacity>
 struct inplace_vector_destruct_base {
   using size_type = std::size_t;
   using internal_size_type = inplace_vector_internal_size_type<Capacity>;
-
   using internal_storage_type =
       std::conditional_t<std::is_trivial_v<T>,
                          inplace_vector_array_based_storage<T, Capacity>,
