@@ -15,6 +15,13 @@ project(
     LANGUAGES CXX
 )
 
+# [CMAKE.SKIP_EXAMPLES]
+option(
+    BEMAN_EXEMPLAR_BUILD_EXAMPLES
+    "Enable building examples. Default: ON. Values: { ON, OFF }."
+    ${PROJECT_IS_TOP_LEVEL}
+)
+
 include(GNUInstallDirs)
 
 add_library(beman.inplace_vector INTERFACE)
@@ -45,4 +52,8 @@ install(
 if(BUILD_TESTING)
     include(CTest)
     add_subdirectory(src/beman/inplace_vector/tests)
+endif()
+
+if(BEMAN_EXEMPLAR_BUILD_EXAMPLES)
+    add_subdirectory(examples)
 endif()
