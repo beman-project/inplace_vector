@@ -2,12 +2,10 @@
 SPDX-License-Identifier: <SPDX License Expression>
 -->
 
-# beman.inplace\_vector
+# beman.inplace\_vector: Dynamically-resizable vector with fixed capacity
 
 ![Continuous Integration Tests](https://github.com/beman-project/inplace_vector/actions/workflows/ci_tests.yml/badge.svg)
 ![Code Format](https://github.com/beman-project/inplace_vector/actions/workflows/pre-commit.yml/badge.svg)
-
-A dynamically-resizable vector with fixed capacity and embedded storage
 
 ## Implements
 
