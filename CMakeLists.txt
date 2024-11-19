@@ -5,14 +5,19 @@
 
 cmake_minimum_required(VERSION 3.23)
 
-option(BUILD_TESTING "Build tests" ON)
-
 project(
     beman.inplace_vector
     VERSION 1.0.0
     DESCRIPTION
         "A dynamically-resizable vector with fixed capacity and embedded storage"
     LANGUAGES CXX
+)
+
+# [CMAKE.SKIP_TESTS]
+option(
+    BEMAN_INPLACE_VECTOR_BUILD_TESTS
+    "Enable building tests and test infrastructure. Default: ON. Values: { ON, OFF }."
+    ${PROJECT_IS_TOP_LEVEL}
 )
 
 include(GNUInstallDirs)
@@ -42,7 +47,7 @@ install(
     "${CMAKE_CURRENT_SOURCE_DIR}/include/beman/inplace_vector/inplace_vector.hpp"
 )
 
-if(BUILD_TESTING)
+if(BEMAN_INPLACE_VECTOR_BUILD_TESTS)
     include(CTest)
     add_subdirectory(tests/beman/inplace_vector)
 endif()
