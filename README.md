@@ -28,7 +28,31 @@ which dynamic memory allocations are undesired.
 ### Code example
 
 ```cpp
-// TODO: Add example
+#include <array>
+#include <cassert>
+
+#include <beman/inplace_vector/inplace_vector.hpp>
+
+using namespace beman::inplace_vector;
+
+/**
+ * Generates fibonacci sequence using inplace_vector.
+ * See: https://en.wikipedia.org/wiki/Fibonacci_sequence
+ */
+template <int Capacity> inplace_vector<int, Capacity> fibonacci_to(int num) {
+  assert(num < Capacity);
+
+  inplace_vector<int, Capacity> vec;
+
+  for (auto i = 0; i <= num; ++i) {
+    static std::array<int, 2> first_two = {0, 1};
+
+    auto new_val = i < 2 ? first_two[i] : vec[i - 1] + vec[i - 2];
+    vec.push_back(new_val);
+  }
+
+  return vec;
+}
 ```
 
 ## How to Build
