@@ -574,7 +574,8 @@ public:
 #ifdef __cpp_constexpr_dynamic_alloc
     auto final = std::construct_at(end(), std::forward<Args>(args)...);
 #else
-    // Note placement new may not be not constexpr friendly
+    // Note: placement-new may not be constexpr friendly
+    // Avoiding placement-new may allow inplace_vector to be constexpr friendly
     auto final = ::new (end()) T(std::forward<Args>(args)...);
 #endif
     this->change_size(1);
