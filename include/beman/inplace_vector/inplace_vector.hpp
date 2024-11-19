@@ -115,10 +115,10 @@ struct inplace_vector_base : public inplace_vector_destruct_base<T, Capacity> {
   }
   inplace_vector_base(inplace_vector_base &&other) noexcept(
       Capacity == 0 || std::is_nothrow_move_constructible_v<T>)
-      : inplace_vector_destruct_base<T, Capacity>(other.size) {
+      : inplace_vector_destruct_base<T, Capacity>(other.size_) {
     std::copy(other.begin(), other.end(), begin());
     std::destroy(other.begin(), other.end());
-    other.size = 0;
+    other.size_ = 0;
   }
   inplace_vector_base &operator=(const inplace_vector_base &other) noexcept(
       std::is_nothrow_copy_constructible_v<T> &&
