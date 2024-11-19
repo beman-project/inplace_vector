@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <array>
 #include <cassert>
+#include <cstddef>
 #include <exception>
 #include <iterator>
 #include <limits>
@@ -75,7 +76,7 @@ struct inplace_vector_array_based_storage {
 // Selecting this storage type implies: !std::is_trivial_v<T> and Capacity != 0
 template <typename T, std::size_t Capacity>
 struct inplace_vector_bytes_based_storage {
-  alignas(T) unsigned char elems[Capacity * sizeof(T)];
+  alignas(T) std::byte elems[Capacity * sizeof(T)];
 
   T *begin() { return std::launder(reinterpret_cast<const T *>(elems)); }
   const T *begin() const {
