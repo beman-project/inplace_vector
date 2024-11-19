@@ -44,5 +44,5 @@ install(
 
 if(BUILD_TESTING)
     include(CTest)
-    add_subdirectory(src/beman/inplace_vector/tests)
+    add_subdirectory(tests/beman/inplace_vector)
 endif()
