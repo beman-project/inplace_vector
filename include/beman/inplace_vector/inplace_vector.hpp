@@ -2,18 +2,29 @@
 
 #include <algorithm>
 #include <cassert>
-#include <compare>
-#include <concepts>
 #include <exception>
 #include <iterator>
 #include <limits>
 #include <memory>
 #include <new>
-#include <ranges>
 #include <stdexcept>
 #include <type_traits>
+#include <utility>
+
+#ifdef __cpp_concepts
+#include <concepts>
+#endif
+
+#ifdef __cpp_lib_containers_ranges
+#include <ranges>
+#endif
+
+#ifdef __cpp_lib_three_way_comparison
+#include <compare>
+#endif
 
 namespace beman::inplace_vector {
+#ifdef __cpp_concepts
 namespace detail {
 // Exposition-only container-compatible-range
 template <typename T>
@@ -29,6 +40,7 @@ concept container_compatible_range_impl = requires(T &&t) {
 template <typename T>
 constexpr bool container_compatible_range =
     detail::container_compatible_range_impl<T>;
+#endif
 
 template <bool Condition, typename TrueType, typename FalseType>
 using If = typename std::conditional<Condition, TrueType, FalseType>::type;
@@ -99,12 +111,12 @@ struct inplace_vector_base : public inplace_vector_destruct_base<T, Capacity> {
   inplace_vector_base(const inplace_vector_base &other) noexcept(
       std::is_nothrow_copy_constructible_v<T>)
       : inplace_vector_destruct_base<T, Capacity>(other.size) {
-    std::ranges::copy(other.begin(), other.end(), begin());
+    std::copy(other.begin(), other.end(), begin());
   }
   inplace_vector_base(inplace_vector_base &&other) noexcept(
       Capacity == 0 || std::is_nothrow_move_constructible_v<T>)
       : inplace_vector_destruct_base<T, Capacity>(other.size) {
-    std::ranges::copy(other.begin(), other.end(), begin());
+    std::copy(other.begin(), other.end(), begin());
     std::destroy(other.begin(), other.end());
     other.size = 0;
   }
@@ -114,17 +126,16 @@ struct inplace_vector_base : public inplace_vector_destruct_base<T, Capacity> {
     const auto diff = static_cast<std::ptrdiff_t>(other.size() - size());
     // other.size is less than size
     if (diff < 0) {
-      const auto new_end =
-          std::ranges::copy(other.begin(), other.end(), begin());
+      const auto new_end = std::copy(other.begin(), other.end(), begin());
       // destroy unnecessary memory
       std::destroy(new_end, end());
     }
     // other.size is greater than size
     else {
       // copy other vector into the current vector until it runs ouf of size
-      std::ranges::copy(other.begin(), other.begin() + size(), begin());
+      std::copy(other.begin(), other.begin() + size(), begin());
       // copy the other half after the end of the current vector
-      std::ranges::copy(other.begin() + size(), other.end(), end());
+      std::copy(other.begin() + size(), other.end(), end());
     }
     this->size_ = other.size();
     return *this;
@@ -200,7 +211,7 @@ struct inplace_vector_base : public inplace_vector_destruct_base<T, Capacity> {
   template <typename Iter>
   static constexpr void uninitialized_copy(Iter first, Iter last,
                                            iterator dest) noexcept {
-    std::ranges::copy(first, last, dest);
+    std::copy(first, last, dest);
   }
 
   template <typename Iter>
@@ -244,6 +255,7 @@ public:
     base::uninitialized_fill(this->begin(), this->end(), value);
   }
 
+#ifdef __cpp_concepts
   template <class InputIterator>
     requires std::input_iterator<T>
   constexpr inplace_vector(InputIterator first, InputIterator last) : base() {
@@ -251,6 +263,7 @@ public:
       emplace_back(*first);
     }
   }
+
   template <class InputIterator>
     requires std::forward_iterator<T>
   constexpr inplace_vector(InputIterator first, InputIterator last)
@@ -259,7 +272,15 @@ public:
       base::uninitialized_copy(first, last, this->begin());
     }
   }
-#ifdef __cpp_lib_containers_ranges
+#else
+  template <class Itr> constexpr inplace_vector(Itr first, Itr last) : base() {
+    for (; first != last; ++first) {
+      emplace_back(*first);
+    }
+  }
+#endif
+
+#if defined(__cpp_lib_containers_ranges) && defined(__cpp_concepts)
   template <typename R>
     requires container_compatible_range<R>
   constexpr inplace_vector(std::from_range_t, R &&rg) {
@@ -267,7 +288,6 @@ public:
       emplace_back(std::forward<decltype(value)>(value));
     }
   }
-#else
 #endif
   constexpr inplace_vector(std::initializer_list<T> il) : base(il.size()) {
     if (il.size() != 0) {
@@ -282,14 +302,13 @@ public:
     // The current size is greater
     if (diff < 0) {
       // if other.size is less than just copy normally
-      const iterator new_end =
-          std::ranges::copy(il.begin(), il.end(), this->begin());
+      const iterator new_end = std::copy(il.begin(), il.end(), this->begin());
       // destroy the wasted memory
       std::destroy(new_end, this->end());
       // The other size is greater than size
     } else {
       // copy other vector into the current vector until it runs ouf of size
-      std::ranges::copy(il.begin(), il.begin() + this->size(), this->begin());
+      std::copy(il.begin(), il.begin() + this->size(), this->begin());
       // copy the other half after the end of the current vector
       base::uninitialized_copy(il.begin() + this->size(), il.end(),
                                this->end());
@@ -318,6 +337,7 @@ public:
     }
   }; // freestanding-deleted
 
+#if defined(__cpp_lib_containers_ranges) and defined(__cpp_concepts)
   template <typename R>
     requires container_compatible_range<R>
   constexpr void assign_range(R &&rg) {
@@ -340,6 +360,8 @@ public:
       emplace_back(*first);
     }
   }; // freestanding-deleted
+#endif
+
   constexpr void assign(size_type n, const T &u) {
     if (Capacity == 0) {
       assert(size() == 0 &&
@@ -366,13 +388,12 @@ public:
     // other size is less than size
     if (diff < 0) {
       // if other.size is less than just copy normally
-      const iterator new_end =
-          std::ranges::copy(il.begin(), il.end(), this->begin());
+      const iterator new_end = std::copy(il.begin(), il.end(), this->begin());
       std::destroy(new_end, this->end);
       // other.size is greater than size
     } else {
       // copy other vector into the current vector until it runs ouf of size
-      std::ranges::copy(il.begin(), il.begin() + this->size(), this->begin());
+      std::copy(il.begin(), il.begin() + this->size(), this->begin());
       // copy the other half after the end of the current vector
       base::uninitialized_copy(il.begin() + this->size(), il.end(),
                                this->end());
@@ -491,6 +512,8 @@ public:
     }
     return this->unchecked_emplace_back(std::move(x));
   }; // freestanding-deleted
+
+#if defined(__cpp_lib_containers_ranges) and defined(__cpp_concepts)
   template <typename R>
     requires container_compatible_range<T>
   constexpr void append_range(R &&rg) {
@@ -500,6 +523,8 @@ public:
       emplace_back(*first);
     }
   }; // freestanding-deleted
+#endif
+
   constexpr void pop_back() {
     if (!empty()) {
       const auto end = this->end();
@@ -546,7 +571,13 @@ public:
 
   template <class... Args>
   constexpr reference unchecked_emplace_back(Args &&...args) {
+#ifdef __cpp_constexpr_dynamic_alloc
     auto final = std::construct_at(end(), std::forward<Args>(args)...);
+#else
+    // Note: placement-new may not be constexpr friendly
+    // Avoiding placement-new may allow inplace_vector to be constexpr friendly
+    auto final = ::new (end()) T(std::forward<Args>(args)...);
+#endif
     this->change_size(1);
     return *final;
   };
@@ -644,13 +675,14 @@ public:
       InputIterator imiddle = std::next(first, to_copy);
       base::uninitialized_copy(imiddle, last, end);
       base::uninitialized_move(pos, end, middle);
-      std::ranges::copy(first, imiddle, pos);
+      std::copy(first, imiddle, pos);
     } else {
       base::uninitialized_move(end - count, end, end);
       std::move_backward(pos, end - count, end);
-      std::ranges::copy(first, last, pos);
+      std::copy(first, last, pos);
     }
   } // freestanding-deleted
+#if defined(__cpp_lib_containers_ranges) and defined(__cpp_concepts)
   template <typename R>
     requires container_compatible_range<R>
   constexpr iterator insert_range(const_iterator position, R &&rg) {
@@ -665,6 +697,7 @@ public:
     std::rotate(pos, old_end, this->end());
     return pos;
   } // freestanding-deleted
+#endif
   constexpr iterator insert(const_iterator position,
                             std::initializer_list<T> il) {
     const iterator pos = position;
@@ -744,10 +777,13 @@ public:
     return std::equal(x.begin(), x.end(), y.begin(), y.end());
   }
 
+#ifdef __cpp_lib_three_way_comparison
   constexpr friend std::compare_three_way_result<T>
   operator<=>(const inplace_vector &x, const inplace_vector &y) {
     return std::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
   };
+#endif
+
   constexpr friend void swap(inplace_vector &x, inplace_vector &y) noexcept(
       Capacity == 0 || (std::is_nothrow_swappable_v<T> &&
                         std::is_nothrow_move_constructible_v<T>)) {
