@@ -57,10 +57,13 @@ using inplace_vector_internal_size_type =
 
 // array based storage is used so that we can satisfy constexpr requirement
 //
-// Selecting this storage type implies: std::is_trivial_v<T>
+// Selecting this storage type implies: std::is_trivial_v<T> or Capacity = 0
 template <typename T, std::size_t Capacity>
 struct inplace_vector_array_based_storage {
-  std::array<T, Capacity> elems;
+  using array_type = If<!std::is_const_v<T>, std::array<T, Capacity>,
+                        const std::array<std::remove_const_t<T>, Capacity>>;
+
+  array_type elems{};
 
   constexpr T *begin() { return elems.data(); }
   constexpr const T *begin() const { return elems.data(); }
@@ -69,7 +72,7 @@ struct inplace_vector_array_based_storage {
 // byte array based storage is used for non-constexpr environment, where default
 // initialization may not be available.
 //
-// Selecting this storage type implies: !std::is_trivial_v<T>
+// Selecting this storage type implies: !std::is_trivial_v<T> and Capacity != 0
 template <typename T, std::size_t Capacity>
 struct inplace_vector_bytes_based_storage {
   alignas(T) unsigned char elems[Capacity * sizeof(T)];
@@ -86,7 +89,7 @@ struct inplace_vector_destruct_base {
   using size_type = std::size_t;
   using internal_size_type = inplace_vector_internal_size_type<Capacity>;
   using internal_storage_type =
-      std::conditional_t<std::is_trivial_v<T>,
+      std::conditional_t<std::is_trivial_v<T> or Capacity == 0,
                          inplace_vector_array_based_storage<T, Capacity>,
                          inplace_vector_bytes_based_storage<T, Capacity>>;
 

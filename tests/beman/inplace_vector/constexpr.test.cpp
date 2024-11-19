@@ -16,50 +16,54 @@ struct NonTrivial {
 };
 static_assert(!std::is_trivial_v<NonTrivial>);
 
+template <typename T> constexpr bool test_empty_vec(T &vec) {
+
+  // sizes
+  S_ASSERT(vec.max_size() == 0);
+  S_ASSERT(vec.capacity() == 0);
+  S_ASSERT(vec.size() == 0);
+  S_ASSERT(vec.empty());
+
+  // itr
+  S_ASSERT(vec.begin() == vec.end());
+  S_ASSERT(vec.cbegin() == vec.cend());
+  S_ASSERT(vec.rbegin() == vec.rend());
+  S_ASSERT(vec.crbegin() == vec.crend());
+
+  // push_back
+  S_ASSERT(vec.try_push_back({}) == nullptr);
+  S_ASSERT(vec.try_emplace_back() == nullptr);
+
+  return true;
+}
+
 static_assert(std::invoke([]() {
                 inplace_vector<int, 0> vec;
-
-                // sizes
-                S_ASSERT(vec.max_size() == 0);
-                S_ASSERT(vec.capacity() == 0);
-                S_ASSERT(vec.size() == 0);
-                S_ASSERT(vec.empty());
-
-                // itr
-                S_ASSERT(vec.begin() == vec.end());
-                S_ASSERT(vec.cbegin() == vec.cend());
-                S_ASSERT(vec.rbegin() == vec.rend());
-                S_ASSERT(vec.crbegin() == vec.crend());
-
-                // push_back
-                S_ASSERT(vec.try_push_back(0) == nullptr);
-                S_ASSERT(vec.try_emplace_back(0) == nullptr);
-
+                test_empty_vec(vec);
                 return true;
               }),
               "0 capacity Trivial type");
 
 static_assert(std::invoke([]() {
+                inplace_vector<const int, 0> vec;
+                test_empty_vec(vec);
+                return true;
+              }),
+              "0 capacity Trivial const type");
+
+static_assert(std::invoke([]() {
                 inplace_vector<NonTrivial, 0> vec;
-
-                // sizes
-                S_ASSERT(vec.max_size() == 0);
-                S_ASSERT(vec.capacity() == 0);
-                S_ASSERT(vec.size() == 0);
-                S_ASSERT(vec.empty());
-
-                // itr
-                S_ASSERT(vec.begin() == vec.end());
-                S_ASSERT(vec.cbegin() == vec.cend());
-                S_ASSERT(vec.rbegin() == vec.rend());
-                S_ASSERT(vec.crbegin() == vec.crend());
-
-                // push_back
-                S_ASSERT(vec.try_push_back({}) == nullptr);
-
+                test_empty_vec(vec);
                 return true;
               }),
               "0 capacity Non-trivial type");
+
+static_assert(std::invoke([]() {
+                inplace_vector<const NonTrivial, 0> vec;
+                test_empty_vec(vec);
+                return true;
+              }),
+              "0 capacity Non-trivial const type");
 
 static_assert(std::invoke([]() {
                 // sizes
