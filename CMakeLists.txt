@@ -13,6 +13,13 @@ project(
     LANGUAGES CXX
 )
 
+# [CMAKE.SKIP_EXAMPLES]
+option(
+    BEMAN_EXEMPLAR_BUILD_EXAMPLES
+    "Enable building examples. Default: ON. Values: { ON, OFF }."
+    ${PROJECT_IS_TOP_LEVEL}
+)
+
 # [CMAKE.SKIP_TESTS]
 option(
     BEMAN_INPLACE_VECTOR_BUILD_TESTS
@@ -53,4 +60,8 @@ install(
 if(BEMAN_INPLACE_VECTOR_BUILD_TESTS)
     include(CTest)
     add_subdirectory(tests/beman/inplace_vector)
+endif()
+
+if(BEMAN_EXEMPLAR_BUILD_EXAMPLES)
+    add_subdirectory(examples)
 endif()
