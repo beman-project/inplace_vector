@@ -15,9 +15,8 @@ template <int Capacity> inplace_vector<int, Capacity> fibonacci_to(int num) {
 
   inplace_vector<int, Capacity> vec;
 
+  constexpr static std::array<int, 2> first_two{0, 1};
   for (auto i = 0; i <= num; ++i) {
-    static std::array<int, 2> first_two = {0, 1};
-
     auto new_val = i < 2 ? first_two[i] : vec[i - 1] + vec[i - 2];
     vec.push_back(new_val);
   }
