@@ -23,6 +23,9 @@ option(
 include(GNUInstallDirs)
 
 add_library(beman.inplace_vector INTERFACE)
+# [CMAKE.LIBRARY_ALIAS]
+add_library(beman::inplace_vector ALIAS beman.inplace_vector)
+
 target_include_directories(
     beman.inplace_vector
     INTERFACE
