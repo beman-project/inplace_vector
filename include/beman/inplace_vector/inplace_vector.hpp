@@ -100,24 +100,24 @@ struct inplace_vector_destruct_base {
   // [containers.sequences.inplace.vector.cons], construct/copy/destroy
   constexpr inplace_vector_destruct_base() = default;
 
-  inplace_vector_destruct_base(
+  constexpr inplace_vector_destruct_base(
       const inplace_vector_destruct_base
           &other) noexcept(std::is_nothrow_copy_constructible_v<T>)
       : elems(), size_(other.size_) {}
 
-  inplace_vector_destruct_base(
+  constexpr inplace_vector_destruct_base(
       const inplace_vector_destruct_base
           &&other) noexcept(std::is_nothrow_move_constructible_v<T>)
-      : elems(), size_(other.size()) {}
+      : elems(), size_(other.size_) {}
 
-  inplace_vector_destruct_base &
+  constexpr inplace_vector_destruct_base &
   operator=(const inplace_vector_destruct_base &other) noexcept(
       std::is_nothrow_copy_constructible_v<T> &&
       std::is_nothrow_copy_assignable_v<T>) {
     size_ = other.size_;
   }
 
-  inplace_vector_destruct_base &
+  constexpr inplace_vector_destruct_base &
   operator=(const inplace_vector_destruct_base &&other) noexcept(
       std::is_nothrow_move_constructible_v<T> &&
       std::is_nothrow_move_assignable_v<T>) {
@@ -142,19 +142,18 @@ struct inplace_vector_base : public inplace_vector_destruct_base<T, Capacity> {
 
   // [containers.sequences.inplace.vector.cons], construct/copy/destroy
   constexpr inplace_vector_base() = default;
-  inplace_vector_base(const inplace_vector_base &other) noexcept(
+  constexpr inplace_vector_base(const inplace_vector_base &other) noexcept(
       std::is_nothrow_copy_constructible_v<T>)
-      : inplace_vector_destruct_base<T, Capacity>(other.size) {
+      : inplace_vector_destruct_base<T, Capacity>(other.size_) {
     std::copy(other.begin(), other.end(), begin());
   }
-  inplace_vector_base(inplace_vector_base &&other) noexcept(
+  constexpr inplace_vector_base(inplace_vector_base &&other) noexcept(
       Capacity == 0 || std::is_nothrow_move_constructible_v<T>)
       : inplace_vector_destruct_base<T, Capacity>(other.size_) {
     std::copy(other.begin(), other.end(), begin());
-    std::destroy(other.begin(), other.end());
-    other.size_ = 0;
   }
-  inplace_vector_base &operator=(const inplace_vector_base &other) noexcept(
+  constexpr inplace_vector_base &
+  operator=(const inplace_vector_base &other) noexcept(
       std::is_nothrow_copy_constructible_v<T> &&
       std::is_nothrow_copy_assignable_v<T>) {
     const auto diff = static_cast<std::ptrdiff_t>(other.size() - size());
@@ -175,7 +174,8 @@ struct inplace_vector_base : public inplace_vector_destruct_base<T, Capacity> {
     return *this;
   }
 
-  inplace_vector_base &operator=(inplace_vector_base &&other) noexcept(
+  constexpr inplace_vector_base &
+  operator=(inplace_vector_base &&other) noexcept(
       Capacity == 0 || (std::is_nothrow_move_constructible_v<T> &&
                         std::is_nothrow_move_assignable_v<T>)) {
     const auto diff = static_cast<std::ptrdiff_t>(other.size() - size());
@@ -185,13 +185,10 @@ struct inplace_vector_base : public inplace_vector_destruct_base<T, Capacity> {
       std::destroy(new_end, end());
       // other size is grater than size
     } else {
-      std::move(other, other.begin(), other.begin() + size(), begin());
+      std::move(other.begin(), other.begin() + size(), begin());
       std::move(other.begin() + size(), other.end(), end());
     }
     this->size_ = other.size();
-    std::destroy(other.begin(), other.end());
-    // reset size to zero
-    other.change_size(-static_cast<std::ptrdiff_t>(other.size()));
     return *this;
   }
   constexpr inplace_vector_base(const size_type size)

@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <beman/inplace_vector/inplace_vector.hpp>
 #include <functional>
 #include <type_traits>
@@ -147,6 +148,130 @@ static_assert(std::invoke([]() {
                 return true;
               }),
               "Basic mutation");
+
+// [container.reqmts] General container requirements
+using X = inplace_vector<int, 5>;
+
+constexpr bool reqmts_default() {
+  {
+    X u;
+    S_ASSERT(u.empty());
+  }
+  {
+    X u = X();
+    S_ASSERT(u.empty());
+  }
+
+  return true;
+}
+
+static_assert(reqmts_default());
+
+constexpr bool reqmts_copy() {
+  constexpr X exp{1, 2, 3};
+
+  X a{1, 2, 3};
+
+  {
+    X u(a);
+    S_ASSERT(std::ranges::equal(exp, u));
+    S_ASSERT(std::ranges::equal(exp, a));
+  }
+  {
+    X u = a;
+    S_ASSERT(std::ranges::equal(exp, u));
+    S_ASSERT(std::ranges::equal(exp, a));
+  }
+
+  return true;
+}
+
+static_assert(reqmts_copy());
+
+constexpr bool reqmts_move() {
+  /*
+   * TODO: Need to keep in check with revision
+   *
+   * Move semantics
+   * A moved-from inplace_vector is left in a valid but unspecified state
+   * (option 3 below) unless T is trivially-copyable, in which case the size of
+   * the inplace_vector does not change (array semantics, option 2 below). That
+   * is:
+   *
+   * inplace_vector a(10);
+   * inplace_vector b(std::move(a));
+   * assert(a.size() == 10); // MAY FAIL
+   *
+   * moves a's elements element-wise into b, and afterwards the size of the
+   * moved-from inplace_vector may have changed.
+   *
+   * This prevents code from relying on the size staying the same (and therefore
+   * being incompatible with changing an inplace_vector type back to vector)
+   * without incuring the cost of having to clear the inplace_vector.
+   *
+   * When T is trivially-copyable, array semantics are used to provide trivial
+   * move operations.
+   */
+
+  {
+    constexpr X exp{1, 2, 3};
+    X mov_from(exp);
+    X u(std::move(mov_from));
+    S_ASSERT(std::ranges::equal(exp, u));
+
+    static_assert(std::is_trivially_copyable_v<X::value_type>);
+    S_ASSERT(mov_from.size() == exp.size());
+  }
+  {
+    // Note(river): for later non-trivial type implementation, verify:
+    // Effects: All existing elements of a are either move assigned to or
+    // destroyed.
+    constexpr X origin{1, 2, 3};
+    constexpr X exp{1, 2};
+
+    X a(origin);
+    X mov_from(exp);
+    a = std::move(mov_from);
+
+    S_ASSERT(std::ranges::equal(exp, a));
+    static_assert(std::is_trivially_copyable_v<X::value_type>);
+    S_ASSERT(mov_from.size() == exp.size());
+  }
+
+  return true;
+}
+
+static_assert(reqmts_move());
+
+// destructor implicilty tested
+
+constexpr bool reqmts_itr() {
+  constexpr X exp{1, 2, 3};
+
+  {
+    X b = exp;
+    auto beg = b.begin();
+    auto end = b.end();
+    end--;
+
+    S_ASSERT(*b.begin() == 1);
+    S_ASSERT(*end == 3);
+  }
+
+  {
+    X b = exp;
+    auto beg = b.cbegin();
+    auto end = b.cend();
+    end--;
+
+    S_ASSERT(*b.begin() == 1);
+    S_ASSERT(*end == 3);
+  }
+
+  return true;
+}
+
+static_assert(reqmts_itr());
 
 int main() {
   // compile means pass
