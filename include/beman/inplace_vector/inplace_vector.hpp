@@ -69,7 +69,6 @@ struct inplace_vector_type_based_storage {
   inplace_vector_array_type<T, Capacity> elems{};
 
   constexpr T *begin() { return elems.data(); }
-  constexpr const T *begin() const { return elems.data(); }
 };
 
 // byte array based storage is used for non-constexpr environment, where default
@@ -81,9 +80,6 @@ struct inplace_vector_bytes_based_storage {
   alignas(T) inplace_vector_array_type<std::byte, Capacity * sizeof(T)> elems;
 
   T *begin() { return std::launder(reinterpret_cast<const T *>(elems)); }
-  const T *begin() const {
-    return std::launder(reinterpret_cast<const T *>(elems));
-  }
 };
 
 //  Base class for inplace_vector
