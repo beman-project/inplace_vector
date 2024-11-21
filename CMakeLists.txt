@@ -33,14 +33,13 @@ option(
     ${PROJECT_IS_TOP_LEVEL}
 )
 
+# includes
 include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
 add_library(beman_inplace_vector INTERFACE)
 # [CMAKE.LIBRARY_ALIAS]
-add_library(beman::inplace_vector ALIAS beman_inplace_vector)
-
-#XXX target_include_directories(beman.inplace_vector ... ?
+add_library(beman::beman_inplace_vector ALIAS beman_inplace_vector)
 
 target_sources(
     beman_inplace_vector
@@ -62,13 +61,14 @@ target_compile_features(
         "$<$<NOT:$<COMPILE_FEATURES:cxx_std_23>>:cxx_std_20>"
 )
 
+# export cmake config package
 block()
     # copied from execution26:
     set(TARGET_NAME beman_inplace_vector)
     set(TARGET_NAMESPACE beman)
     # set(TARGET_PREFIX ${TARGET_NAMESPACE}.${TARGET_NAME}) # FIXME: not used yet? CK
     # set(TARGET_LIBRARY ${PROJECT_NAME})
-    # set(TARGET_ALIAS ${TARGET_LIBRARY}::${TARGET_LIBRARY})
+    # set(TARGET_ALIAS ${TARGET_NAMESPACE}::${TARGET_LIBRARY})
     set(TARGET_PACKAGE_NAME ${PROJECT_NAME}-config)
     set(TARGETS_EXPORT_NAME ${PROJECT_NAME}-targets)
     set(INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
