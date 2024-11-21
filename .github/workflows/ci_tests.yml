@@ -82,7 +82,7 @@ jobs:
           ninja --version
       - name: Configure CMake
         run: |
-          cmake -B build -S . "-DCMAKE_CXX_STANDARD=${{ matrix.cpp_version }} ${{ matrix.cmake_args.args }}"
+          cmake -B build -S . -DCMAKE_PREFIX_PATH=/tmp/beman.inplace_vector "-DCMAKE_CXX_STANDARD=${{ matrix.cpp_version }} ${{ matrix.cmake_args.args }}"
         env:
           CC: ${{ matrix.compiler.c }}
           CXX: ${{ matrix.compiler.cpp }}
