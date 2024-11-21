@@ -14,7 +14,8 @@ target_link_libraries(
 add_test(NAME beman.inplace_vector.test COMMAND beman.inplace_vector.test)
 
 # test if the targets are findable from the build directory
-# NOTE: for an INTERFACE library, we may always use the -C Debug! CK
+# NOTE: For an INTERFACE library and multi config generators,
+# we may always use the -C Debug config type to prevent problems! CK
 add_test(
     NAME find-package-test
     COMMAND
