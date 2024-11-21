@@ -6,6 +6,9 @@
 # Tests
 add_executable(beman.inplace_vector.test inplace_vector.test.cpp)
 
-target_link_libraries(beman.inplace_vector.test PRIVATE beman.inplace_vector)
+target_link_libraries(
+    beman.inplace_vector.test
+    PRIVATE beman::beman_inplace_vector
+)
 
 add_test(NAME beman.inplace_vector.test COMMAND beman.inplace_vector.test)

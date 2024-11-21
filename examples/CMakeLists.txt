@@ -2,7 +2,7 @@
 
 set(ALL_EXAMPLES fibonacci)
 
-message("Examples to be built: ${ALL_EXAMPLES}")
+message(STATUS "Examples to be built: ${ALL_EXAMPLES}")
 
 foreach(example ${ALL_EXAMPLES})
     add_executable(beman.inplace_vector.examples.${example})
@@ -12,6 +12,6 @@ foreach(example ${ALL_EXAMPLES})
     )
     target_link_libraries(
         beman.inplace_vector.examples.${example}
-        beman.inplace_vector
+        beman::inplace_vector
     )
 endforeach()

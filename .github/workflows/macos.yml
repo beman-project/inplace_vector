@@ -1,0 +1,46 @@
+# .github/workflows/macos.yml
+# SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
+
+name: Macos Build
+
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main", "develop"]
+
+jobs:
+  build:
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+
+      matrix:
+        preset: [debug, release]
+        # TODO: compiler: [g++, clang++-19]
+        compiler: [g++, clang++-18]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Cpp
+        # if: startsWith(matrix.compiler, 'clang')
+        uses: aminya/setup-cpp@v1
+        with:
+          # TODO: compiler: llvm-19
+          # clangtidy: true
+          # cmake: true
+          ninja: true
+
+      - name: Install llvm-19
+        if: startsWith(matrix.compiler, 'clang')
+        run: |
+          brew install llvm@19 || echo ignored
+
+      - name: macos clang++-18 ${{ matrix.preset }}
+        if: startsWith(matrix.compiler, 'clang')
+        run: CXX=$(brew --prefix llvm@18)/bin/clang++ cmake --workflow --preset ${{ matrix.preset }}
+
+      - name: macos g++ ${{ matrix.preset }}
+        if: startsWith(matrix.compiler, 'g++')
+        run: CXX=${{ matrix.compiler }} cmake --workflow --preset ${{ matrix.preset }}
