@@ -56,15 +56,17 @@ using inplace_vector_internal_size_type =
           If<Capacity <= std::numeric_limits<uint32_t>::max(), uint32_t,
              uint64_t>>>;
 
+template <typename T, std::size_t Capacity>
+using inplace_vector_array_type =
+    If<!std::is_const_v<T>, std::array<T, Capacity>,
+       const std::array<std::remove_const_t<T>, Capacity>>;
+
 // array based storage is used so that we can satisfy constexpr requirement
 //
 // Selecting this storage type implies: std::is_trivial_v<T> or Capacity = 0
 template <typename T, std::size_t Capacity>
-struct inplace_vector_array_based_storage {
-  using array_type = If<!std::is_const_v<T>, std::array<T, Capacity>,
-                        const std::array<std::remove_const_t<T>, Capacity>>;
-
-  array_type elems{};
+struct inplace_vector_type_based_storage {
+  inplace_vector_array_type<T, Capacity> elems{};
 
   constexpr T *begin() { return elems.data(); }
   constexpr const T *begin() const { return elems.data(); }
@@ -76,7 +78,7 @@ struct inplace_vector_array_based_storage {
 // Selecting this storage type implies: !std::is_trivial_v<T> and Capacity != 0
 template <typename T, std::size_t Capacity>
 struct inplace_vector_bytes_based_storage {
-  alignas(T) std::byte elems[Capacity * sizeof(T)];
+  alignas(T) inplace_vector_array_type<std::byte, Capacity * sizeof(T)> elems;
 
   T *begin() { return std::launder(reinterpret_cast<const T *>(elems)); }
   const T *begin() const {
@@ -91,7 +93,7 @@ struct inplace_vector_destruct_base {
   using internal_size_type = inplace_vector_internal_size_type<Capacity>;
   using internal_storage_type =
       std::conditional_t<std::is_trivial_v<T> or Capacity == 0,
-                         inplace_vector_array_based_storage<T, Capacity>,
+                         inplace_vector_type_based_storage<T, Capacity>,
                          inplace_vector_bytes_based_storage<T, Capacity>>;
 
   internal_storage_type elems;
