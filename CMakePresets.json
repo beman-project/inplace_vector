@@ -53,7 +53,7 @@
     {
       "name": "release",
       "configurePreset": "release",
-      "configuration": "Release",
+      "configuration": "RelWithDebInfo",
       "targets": [
         "all_verify_interface_header_sets",
         "install"
@@ -99,7 +99,7 @@
     {
       "name": "release",
       "inherits": "test_base",
-      "configuration": "Release",
+      "configuration": "RelWithDebInfo",
       "configurePreset": "release"
     }
   ],
@@ -108,7 +108,7 @@
       "name": "release",
       "configurePreset": "release",
       "configurations": [
-        "Release"
+        "RelWithDebInfo"
       ],
       "generators": [
         "TGZ"

@@ -16,9 +16,9 @@ jobs:
       fail-fast: false
 
       matrix:
-        preset: [debug, release]
+        preset: [debug, release, gcov, asan, lsan, usan]
         # TODO: compiler: [g++, clang++-19]
-        compiler: [g++, clang++-18]
+        compiler: [clang++-19]
 
     steps:
       - uses: actions/checkout@v4
@@ -37,9 +37,9 @@ jobs:
         run: |
           brew install llvm@19 || echo ignored
 
-      - name: macos clang++-18 ${{ matrix.preset }}
+      - name: macos clang++-19 ${{ matrix.preset }}
         if: startsWith(matrix.compiler, 'clang')
-        run: CXX=$(brew --prefix llvm@18)/bin/clang++ cmake --workflow --preset ${{ matrix.preset }}
+        run: CXX=$(brew --prefix llvm@19)/bin/clang++ cmake --workflow --preset ${{ matrix.preset }}
 
       - name: macos g++ ${{ matrix.preset }}
         if: startsWith(matrix.compiler, 'g++')
