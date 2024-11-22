@@ -127,6 +127,7 @@ configure_file(cmake/gcovr.cfg.in gcovr.cfg @ONLY)
 add_custom_target(
     process_coverage
     WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    DEPENDS test
     COMMENT "Running gcovr to process coverage results"
     COMMAND mkdir -p coverage
     COMMAND gcovr --config gcovr.cfg .
