@@ -10,6 +10,39 @@
   ],
   "buildPresets": [
     {
+      "name": "asan",
+      "configurePreset": "asan",
+      "configuration": "Asan",
+      "targets": [
+        "all"
+      ]
+    },
+    {
+      "name": "lsan",
+      "configurePreset": "lsan",
+      "configuration": "Lsan",
+      "targets": [
+        "all"
+      ]
+    },
+    {
+      "name": "usan",
+      "configurePreset": "usan",
+      "configuration": "Usan",
+      "targets": [
+        "all"
+      ]
+    },
+    {
+      "name": "gcov",
+      "configurePreset": "gcov",
+      "configuration": "Coverage",
+      "targets": [
+        "test",
+        "process_coverage"
+      ]
+    },
+    {
       "name": "debug",
       "configurePreset": "debug",
       "configuration": "Debug",
@@ -40,6 +73,24 @@
       }
     },
     {
+      "name": "asan",
+      "inherits": "test_base",
+      "configuration": "Asan",
+      "configurePreset": "asan"
+    },
+    {
+      "name": "lsan",
+      "inherits": "test_base",
+      "configuration": "Lsan",
+      "configurePreset": "lsan"
+    },
+    {
+      "name": "usan",
+      "inherits": "test_base",
+      "configuration": "Usan",
+      "configurePreset": "usan"
+    },
+    {
       "name": "debug",
       "inherits": "test_base",
       "configuration": "Debug",
@@ -65,6 +116,70 @@
     }
   ],
   "workflowPresets": [
+    {
+      "name": "asan",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "asan"
+        },
+        {
+          "type": "build",
+          "name": "asan"
+        },
+        {
+          "type": "test",
+          "name": "asan"
+        }
+      ]
+    },
+    {
+      "name": "lsan",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "lsan"
+        },
+        {
+          "type": "build",
+          "name": "lsan"
+        },
+        {
+          "type": "test",
+          "name": "lsan"
+        }
+      ]
+    },
+    {
+      "name": "usan",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "usan"
+        },
+        {
+          "type": "build",
+          "name": "usan"
+        },
+        {
+          "type": "test",
+          "name": "usan"
+        }
+      ]
+    },
+    {
+      "name": "gcov",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "gcov"
+        },
+        {
+          "type": "build",
+          "name": "gcov"
+        }
+      ]
+    },
     {
       "name": "debug",
       "steps": [

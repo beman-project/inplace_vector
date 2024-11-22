@@ -5,35 +5,106 @@
   ],
   "configurePresets": [
     {
-      "name": "debug-base-Linux",
+      "name": "base-Linux",
       "hidden": true,
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
-      },
       "condition": {
         "type": "equals",
         "lhs": "${hostSystemName}",
         "rhs": "Linux"
+      },
+      "inherits": [
+        "root-config"
+      ],
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_CONFIGURATION_TYPES": "Debug;RelWithDebInfo;Coverage;Asan;Lsan;Usan",
+        "CMAKE_CXX_FLAGS": "-Wall -Wextra -Wpedantic",
+        "CMAKE_C_FLAGS": "-Wall -Wextra -Wpedantic",
+        "GCOV_EXECUTABLE": "llvm-cov gcov"
       }
     },
     {
-      "name": "release-base-Linux",
+      "name": "debug-base-Linux",
       "hidden": true,
+      "inherits": [
+        "base-Linux"
+      ],
+      "cacheVariables": {
+        "CMAKE_CXX_FLAGS_DEBUG": "-g -O0",
+        "CMAKE_C_FLAGS_DEBUG": "-g -O0",
+        "CMAKE_LD_FLAGS_DEBUG": ""
+      }
+    },
+    {
+      "name": "relwithdebinfo-base-Linux",
+      "hidden": true,
+      "inherits": [
+        "base-Linux"
+      ],
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "RelWithDebInfo",
-        "CMAKE_CXX_FLAGS": "-Wall -Wextra -Wpedantic -Wno-shadow -Wconversion -Wsign-conversion -Wcast-align -Wcast-qual -Woverloaded-virtual -Wformat=2 -Wno-error"
-      },
-      "condition": {
-        "type": "notEquals",
-        "lhs": "${hostSystemName}",
-        "rhs": "Windows"
+        "CMAKE_CXX_FLAGS_RELWITHDEBINFO": "-O2 -g",
+        "CMAKE_C_FLAGS_RELWITHDEBINFO": "-O2 -g",
+        "CMAKE_LD_FLAGS_RELWITHDEBINFO": ""
+      }
+    },
+    {
+      "name": "gcov-base-Linux",
+      "hidden": true,
+      "inherits": [
+        "base-Linux"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Coverage",
+        "CMAKE_CXX_FLAGS_COVERAGE": "-g --coverage",
+        "CMAKE_C_FLAGS_COVERAGE": "-g --coverage",
+        "CMAKE_LD_FLAGS_COVERAGE": "--coverage"
+      }
+    },
+    {
+      "name": "asan-base-Linux",
+      "hidden": true,
+      "inherits": [
+        "base-Linux"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Asan",
+        "CMAKE_CXX_FLAGS_ASAN": "-g -fsanitize=address",
+        "CMAKE_C_FLAGS_ASAN": "-g -fsanitize=address",
+        "CMAKE_LD_FLAGS_ASAN": "-fsanitize=address"
+      }
+    },
+    {
+      "name": "lsan-base-Linux",
+      "hidden": true,
+      "inherits": [
+        "base-Linux"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Lsan",
+        "CMAKE_CXX_FLAGS_LSAN": "-g -fsanitize=leak",
+        "CMAKE_C_FLAGS_LSAN": "-g -fsanitize=leak",
+        "CMAKE_LD_FLAGS_LSAN": "-fsanitize=leak"
+      }
+    },
+    {
+      "name": "usan-base-Linux",
+      "hidden": true,
+      "inherits": [
+        "base-Linux"
+      ],
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Usan",
+        "CMAKE_CXX_FLAGS_USAN": "-g -fsanitize=undefined",
+        "CMAKE_C_FLAGS_USAN": "-g -fsanitize=undefined",
+        "CMAKE_LD_FLAGS_USAN": "-fsanitize=undefined"
       }
     },
     {
       "name": "debug",
       "displayName": "Debug Build",
       "inherits": [
-        "root-config",
         "debug-base-Linux"
       ]
     },
@@ -41,8 +112,35 @@
       "name": "release",
       "displayName": "Release Build",
       "inherits": [
-        "root-config",
-        "release-base-Linux"
+        "relwithdebinfo-base-Linux"
+      ]
+    },
+    {
+      "name": "gcov",
+      "displayName": "Coverage Build",
+      "inherits": [
+        "gcov-base-Linux"
+      ]
+    },
+    {
+      "name": "asan",
+      "displayName": "AddressSanitizer Build",
+      "inherits": [
+        "asan-base-Linux"
+      ]
+    },
+    {
+      "name": "lsan",
+      "displayName": "LeakSanitizer Build",
+      "inherits": [
+        "lsan-base-Linux"
+      ]
+    },
+    {
+      "name": "usan",
+      "displayName": "UndefinedSanitizer Build",
+      "inherits": [
+        "usan-base-Linux"
       ]
     }
   ]

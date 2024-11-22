@@ -78,7 +78,6 @@ block()
         TARGETS beman_inplace_vector
         EXPORT ${TARGETS_EXPORT_NAME}
         FILE_SET inplace_vector_public_headers
-        # DESTINATION ${CMAKE_INSTALL_LIBDIR}
     )
 
     if(EXISTS cmake/Config.cmake.in)
@@ -121,3 +120,14 @@ endif()
 if(BEMAN_EXEMPLAR_BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
+
+# Coverage
+configure_file(cmake/gcovr.cfg.in gcovr.cfg @ONLY)
+
+add_custom_target(
+    process_coverage
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    COMMENT "Running gcovr to process coverage results"
+    COMMAND mkdir -p coverage
+    COMMAND gcovr --config gcovr.cfg .
+)
