@@ -24,18 +24,16 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Setup Cpp
-        # if: startsWith(matrix.compiler, 'clang')
         uses: aminya/setup-cpp@v1
         with:
-          # TODO: compiler: llvm-19
-          # clangtidy: true
           # cmake: true
           ninja: true
+          gcovr: true
 
       - name: Install llvm-19
         if: startsWith(matrix.compiler, 'clang')
         run: |
-          brew install llvm@19 || echo ignored
+          brew install llvm@19
 
       - name: macos clang++-19 ${{ matrix.preset }}
         if: startsWith(matrix.compiler, 'clang')

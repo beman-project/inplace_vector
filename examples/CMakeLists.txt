@@ -23,10 +23,5 @@ foreach(example ${ALL_EXAMPLES})
         beman.inplace_vector.examples.${example}
         beman::beman_inplace_vector
     )
-    if(PROJECT_IS_TOP_LEVEL)
-        add_test(
-            NAME ${example}
-            COMMAND beman.inplace_vector.examples.${example}
-        )
-    endif()
+    add_test(NAME ${example} COMMAND beman.inplace_vector.examples.${example})
 endforeach()
