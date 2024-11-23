@@ -63,12 +63,14 @@ target_compile_features(
 
 # export cmake config package
 block()
-    # copied from execution26:
-    set(TARGET_NAME beman_inplace_vector)
-    set(TARGET_NAMESPACE beman)
-    # set(TARGET_PREFIX ${TARGET_NAMESPACE}.${TARGET_NAME}) # FIXME: not used yet? CK
+    # NOTE: copied from execution26:
+    # FIXME: but not yet used? CK
+    # set(TARGET_NAME inplace_vector)
+    # set(TARGET_NAMESPACE beman)
+    # set(TARGET_PREFIX ${TARGET_NAMESPACE}.${TARGET_NAME})
     # set(TARGET_LIBRARY ${PROJECT_NAME})
     # set(TARGET_ALIAS ${TARGET_NAMESPACE}::${TARGET_LIBRARY})
+
     set(TARGET_PACKAGE_NAME ${PROJECT_NAME}-config)
     set(TARGETS_EXPORT_NAME ${PROJECT_NAME}-targets)
     set(INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
@@ -80,36 +82,34 @@ block()
         FILE_SET inplace_vector_public_headers
     )
 
-    if(EXISTS cmake/Config.cmake.in)
-        write_basic_package_version_file(
-            ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_PACKAGE_NAME}-version.cmake
-            VERSION ${PROJECT_VERSION}
-            COMPATIBILITY AnyNewerVersion
-        )
+    write_basic_package_version_file(
+        ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_PACKAGE_NAME}-version.cmake
+        VERSION ${PROJECT_VERSION}
+        COMPATIBILITY AnyNewerVersion
+    )
 
-        configure_package_config_file(
-            cmake/Config.cmake.in
+    configure_package_config_file(
+        cmake/Config.cmake.in
+        ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_PACKAGE_NAME}.cmake
+        INSTALL_DESTINATION ${INSTALL_CONFIGDIR}
+    )
+
+    install(
+        FILES
             ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_PACKAGE_NAME}.cmake
-            INSTALL_DESTINATION ${INSTALL_CONFIGDIR}
-        )
+            ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_PACKAGE_NAME}-version.cmake
+        DESTINATION ${INSTALL_CONFIGDIR}
+    )
 
-        install(
-            FILES
-                ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_PACKAGE_NAME}.cmake
-                ${CMAKE_CURRENT_BINARY_DIR}/${TARGET_PACKAGE_NAME}-version.cmake
-            DESTINATION ${INSTALL_CONFIGDIR}
-        )
+    install(
+        EXPORT ${TARGETS_EXPORT_NAME}
+        FILE ${TARGETS_EXPORT_NAME}.cmake
+        DESTINATION "${INSTALL_CONFIGDIR}"
+        NAMESPACE beman::
+    )
 
-        install(
-            EXPORT ${TARGETS_EXPORT_NAME}
-            FILE ${TARGETS_EXPORT_NAME}.cmake
-            DESTINATION "${INSTALL_CONFIGDIR}"
-            NAMESPACE beman::
-        )
-
-        set(CPACK_GENERATOR TGZ)
-        include(CPack)
-    endif()
+    set(CPACK_GENERATOR TGZ)
+    include(CPack)
 endblock()
 
 if(BEMAN_INPLACE_VECTOR_BUILD_TESTS)

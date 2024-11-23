@@ -21,7 +21,7 @@
         "CMAKE_CONFIGURATION_TYPES": "Debug;RelWithDebInfo;Coverage;Asan;Lsan;Usan",
         "CMAKE_CXX_FLAGS": "-Wall -Wextra -Wpedantic",
         "CMAKE_C_FLAGS": "-Wall -Wextra -Wpedantic",
-        "GCOV_EXECUTABLE": "llvm-cov gcov"
+        "GCOV_EXECUTABLE": "$env{GCOV} gcov"
       }
     },
     {
