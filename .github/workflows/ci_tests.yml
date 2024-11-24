@@ -37,7 +37,7 @@ jobs:
 
       - name: Run preset ${{ matrix.preset }} ${{ matrix.compiler.cpp }}
         run: |
-          which llvm-cov gcov gcovr || echo ignored
+          which llvm-cov-18 gcov gcovr || echo ignored
           cmake --workflow --preset ${{ matrix.preset }}
         env:
           CC: ${{ matrix.compiler.c }}
