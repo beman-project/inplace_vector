@@ -14,6 +14,7 @@ jobs:
   preset-test:
     runs-on: ubuntu-24.04
     strategy:
+      fail-fast: false
       matrix:
         preset: [debug, release, gcov, asan, lsan, usan]
         compiler:
@@ -23,7 +24,7 @@ jobs:
           - cpp: clang++-18
             c: clang-18
             gcov: llvm-cov
-    name: "Preset Test: ${{ matrix.preset }}"
+    name: "Preset Test: ${{ matrix.preset }} ${{ matrix.compiler.cpp }}"
     steps:
       - uses: actions/checkout@v4
 
