@@ -23,7 +23,7 @@ jobs:
             gcov: ""
           - cpp: clang++-18
             c: clang-18
-            gcov: llvm-cov
+            gcov: llvm-cov-18
     name: "Preset Test: ${{ matrix.preset }} ${{ matrix.compiler.cpp }}"
     steps:
       - uses: actions/checkout@v4
@@ -37,6 +37,7 @@ jobs:
 
       - name: Run preset ${{ matrix.preset }} ${{ matrix.compiler.cpp }}
         run: |
+          which llvm-cov gcov gcovr || echo ignored
           cmake --workflow --preset ${{ matrix.preset }}
         env:
           CC: ${{ matrix.compiler.c }}
