@@ -11,21 +11,36 @@ on:
     - cron: '30 15 * * *'
 
 jobs:
-  # preset-test:
-  #   runs-on: ubuntu-latest
-  #   strategy:
-  #     matrix:
-  #       preset: []
-  #   name: "Preset Test: ${{ matrix.preset }}"
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Setup build environment
-  #       uses: lukka/get-cmake@latest
-  #       with:
-  #         cmakeVersion: "~3.25.0"
-  #         ninjaVersion: "^1.11.1"
-  #     - name: Run preset
-  #       run: cmake --workflow --preset ${{ matrix.preset }}
+  preset-test:
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        preset: [debug, release, gcov, asan, lsan, usan]
+        compiler:
+          - cpp: g++-14
+            c: gcc-14
+            gcov: ""
+          - cpp: clang++-18
+            c: clang-18
+            gcov: llvm-cov
+    name: "Preset Test: ${{ matrix.preset }}"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup build environment
+        uses: aminya/setup-cpp@v1
+        with:
+          # cmake: true
+          ninja: true
+          gcovr: true
+
+      - name: Run preset ${{ matrix.preset }} ${{ matrix.compiler.cpp }}
+        run: |
+          cmake --workflow --preset ${{ matrix.preset }}
+        env:
+          CC: ${{ matrix.compiler.c }}
+          CXX: ${{ matrix.compiler.cpp }}
+          GCOV: ${{ matrix.compiler.gcov }}
 
   test:
     strategy:
