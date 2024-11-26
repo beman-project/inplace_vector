@@ -56,15 +56,6 @@ jobs:
             cmake_args:
               description: "Werror"
               args: "-DCMAKE_CXX_FLAGS='-Wall -Wextra -Wpedantic -Werror'"
-          # Note: this is a header only project
-          # - platform: ubuntu-latest
-          #   compiler:
-          #     cpp: g++
-          #     c: gcc
-          #   cpp_version: 20
-          #   cmake_args:
-          #     description: "Dynamic"
-          #     args: "-DBUILD_SHARED_LIBS=ON"
 
     name: "Build & Test: ${{ matrix.compiler.c }} ${{ matrix.cpp_version }} ${{ matrix.cmake_args.description }}"
     runs-on: ${{ matrix.platform }}
