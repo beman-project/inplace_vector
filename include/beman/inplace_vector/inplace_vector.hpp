@@ -335,7 +335,7 @@ public:
     for (; first != last; ++first) {
       emplace_back(*first);
     }
-  }; // freestanding-deleted
+  } // freestanding-deleted
 
 #if defined(__cpp_lib_containers_ranges) and defined(__cpp_concepts)
   template <typename R>
@@ -359,7 +359,7 @@ public:
     for (; first != last; ++first) {
       emplace_back(*first);
     }
-  }; // freestanding-deleted
+  } // freestanding-deleted
 #endif
 
   constexpr void assign(size_type n, const T &u) {
@@ -434,7 +434,7 @@ public:
 
   constexpr reverse_iterator rbegin() noexcept {
     return reverse_iterator{this->end()};
-  };
+  }
   constexpr const_reverse_iterator rbegin() const noexcept {
     return const_reverse_iterator{this->end()};
   }
@@ -452,13 +452,13 @@ public:
 
   constexpr const_reverse_iterator crend() const noexcept {
     return const_reverse_iterator{this->begin()};
-  };
+  }
 
   // [containers.sequences.inplace.vector.members] size/capacity
-  constexpr bool empty() const noexcept { return size() == 0; };
-  constexpr size_type size() const noexcept { return this->size_; };
-  static constexpr size_type max_size() noexcept { return Capacity; };
-  static constexpr size_type capacity() noexcept { return Capacity; };
+  constexpr bool empty() const noexcept { return size() == 0; }
+  constexpr size_type size() const noexcept { return this->size_; }
+  static constexpr size_type max_size() noexcept { return Capacity; }
+  static constexpr size_type capacity() noexcept { return Capacity; }
   constexpr void resize(size_type sz) {
     const auto diff = static_cast<std::ptrdiff_t>(sz - this->size());
     if (diff < 0) {
@@ -471,7 +471,7 @@ public:
       base::uninitialized_value_construct(end, end + diff);
     }
     this->change_size(diff);
-  }; // freestanding-deleted
+  } // freestanding-deleted
   constexpr void resize(size_type sz, const T &c) {
     const auto diff = static_cast<std::ptrdiff_t>(sz - this->size());
     if (diff < 0) {
@@ -484,12 +484,12 @@ public:
       std::uninitialized_fill(end, end + diff, c);
     }
     this->change_size(diff);
-  }; // freestanding-deleted
+  } // freestanding-deleted
   static constexpr void reserve(size_type sz) {
     if (Capacity < sz) {
       throw std::bad_alloc();
     }
-  }; // freestanding-deleted
+  } // freestanding-deleted
   static constexpr void shrink_to_fit() noexcept {}
 
   // [containers.sequences.inplace.vector.modifiers], modifiers
@@ -498,20 +498,20 @@ public:
       throw std::bad_alloc();
     }
     return this->unchecked_emplace_back(std::forward<Args>(args)...);
-  }; // freestanding-deleted
+  } // freestanding-deleted
 
   constexpr reference push_back(const T &x) {
     if (this->size() == Capacity) {
       throw std::bad_alloc();
     }
     return this->unchecked_emplace_back(x);
-  }; // freestanding-deleted
+  } // freestanding-deleted
   constexpr reference push_back(T &&x) {
     if (this->size() == Capacity) {
       throw std::bad_alloc();
     }
     return this->unchecked_emplace_back(std::move(x));
-  }; // freestanding-deleted
+  } // freestanding-deleted
 
 #if defined(__cpp_lib_containers_ranges) and defined(__cpp_concepts)
   template <typename R>
@@ -522,7 +522,7 @@ public:
     for (; first != last; ++first) {
       emplace_back(*first);
     }
-  }; // freestanding-deleted
+  } // freestanding-deleted
 #endif
 
   constexpr void pop_back() {
@@ -531,7 +531,7 @@ public:
       std::destroy(end, end + 1);
       this->change_size(-1);
     }
-  };
+  }
 
   template <class... Args> constexpr pointer try_emplace_back(Args &&...args) {
     if (this->size() == Capacity) {
@@ -539,14 +539,14 @@ public:
     }
     return std::addressof(
         this->unchecked_emplace_back(std::forward<Args>(args)...));
-  };
+  }
   constexpr pointer
   try_push_back(const T &x) noexcept(std::is_nothrow_copy_constructible_v<T>) {
     if (this->size() == Capacity) {
       return nullptr;
     }
     return std::addressof(this->unchecked_emplace_back(x));
-  };
+  }
 
   constexpr pointer
   try_push_back(T &&x) noexcept(std::is_nothrow_move_constructible_v<T>) {
@@ -554,7 +554,7 @@ public:
       return nullptr;
     }
     return std::addressof(this->unchecked_emplace_back(std::move(x)));
-  };
+  }
 
   /*
     template <typename R>
@@ -566,7 +566,7 @@ public:
         emplace_back(*first);
       }
       return frist;
-    };
+    }
   */
 
   template <class... Args>
@@ -580,15 +580,15 @@ public:
 #endif
     this->change_size(1);
     return *final;
-  };
+  }
 
   constexpr reference
   unchecked_push_back(const T &x) noexcept(std::is_nothrow_constructible_v<T>) {
     return this->unchecked_emplace_back(x);
-  };
+  }
   constexpr reference unchecked_push_back(T &&x) {
     return this->unchecked_emplace_back(std::move(x));
-  };
+  }
 
   template <class... Args>
   constexpr iterator emplace(const_iterator position, Args &&...args) {
@@ -609,13 +609,13 @@ public:
       *pos = std::move(temp);
     }
     return pos;
-  }; // freestanding-deleted
+  } // freestanding-deleted
   constexpr iterator insert(const_iterator position, const T &x) {
     return emplace(position, x);
-  }; // freestanding-deleted
+  } // freestanding-deleted
   constexpr iterator insert(const_iterator position, T &&x) {
     return emplace(position, std::move(x));
-  }; // freestanding-deleted
+  } // freestanding-deleted
   constexpr iterator insert(const_iterator position, size_type n, const T &x) {
     const iterator pos = position;
     const iterator end = this->end();
@@ -781,7 +781,7 @@ public:
   constexpr friend std::compare_three_way_result<T>
   operator<=>(const inplace_vector &x, const inplace_vector &y) {
     return std::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
-  };
+  }
 #endif
 
   constexpr friend void swap(inplace_vector &x, inplace_vector &y) noexcept(

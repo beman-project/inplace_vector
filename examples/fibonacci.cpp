@@ -42,7 +42,8 @@ template <int Capacity> inplace_vector<int, Capacity> fibonacci_to(int num) {
  */
 int main() {
   auto fib_seq = fibonacci_to<50>(10);
-  for (auto i = 0u; i < fib_seq.size(); ++i)
+  for (auto i = 0U; i < fib_seq.size(); ++i) {
     std::cout << i << ": " << fib_seq[i] << "\n";
+  }
   std::cout << std::endl;
 }

@@ -31,7 +31,7 @@ template <typename T> constexpr void test() {
   static_assert(std::is_same<decltype(const_bracket),
                              typename vec::const_reference>::value,
                 "");
-  assert(front = T(1));
+  assert(front == T(1));
 
   auto &&const_front = const_range.front();
   static_assert(
@@ -69,6 +69,7 @@ void test_exceptions() {
     try {
       vec too_small{};
       auto res = too_small.at(5);
+      (void)res;
     } catch (const std::out_of_range &) {
     } catch (...) {
       assert(false);
@@ -76,6 +77,7 @@ void test_exceptions() {
     try {
       const vec too_small{};
       auto res = too_small.at(5);
+      (void)res;
     } catch (const std::out_of_range &) {
     } catch (...) {
       assert(false);
