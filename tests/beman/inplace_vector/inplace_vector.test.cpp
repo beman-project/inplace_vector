@@ -27,7 +27,7 @@ template <typename T> constexpr void test() {
                 "");
   assert(const_bracket == T(42));
 
-  auto &&front = range.front();
+  [[maybe_unused]] auto &&front = range.front();
   static_assert(std::is_same<decltype(const_bracket),
                              typename vec::const_reference>::value,
                 "");
