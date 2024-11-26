@@ -77,7 +77,7 @@ template <typename T, std::size_t Capacity>
 struct inplace_vector_bytes_based_storage {
   alignas(T) std::array<std::byte, Capacity * sizeof(T)> elems;
 
-  T *begin() { return std::launder(reinterpret_cast<const T *>(elems.data())); }
+  T *begin() { return std::launder(reinterpret_cast<T *>(elems.data())); }
   const T *begin() const {
     return std::launder(reinterpret_cast<const T *>(elems.data()));
   }
@@ -605,7 +605,8 @@ public:
 #else
     // Note: placement-new may not be constexpr friendly
     // Avoiding placement-new may allow inplace_vector to be constexpr friendly
-    auto final = ::new (end()) T(std::forward<Args>(args)...);
+    // cast to void* here to adapt to a const T
+    auto final = ::new ((void *)end()) T(std::forward<Args>(args)...);
 #endif
     this->change_size(1);
     return *final;

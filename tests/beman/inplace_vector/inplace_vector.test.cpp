@@ -7,7 +7,7 @@ using namespace beman::inplace_vector;
 struct NonTrivial {
   int z = 5;
 
-  bool operator==(NonTrivial const &other) { return this->z == other.z; }
+  bool operator==(NonTrivial const &other) const { return this->z == other.z; }
 };
 static_assert(!std::is_trivial_v<NonTrivial>);
 
