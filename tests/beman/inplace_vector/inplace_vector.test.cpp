@@ -68,14 +68,16 @@ void test_exceptions() {
   {
     try {
       vec too_small{};
-      auto res = too_small.at(5);
+      too_small.at(5);
+      assert(false);
     } catch (const std::out_of_range &) {
     } catch (...) {
       assert(false);
     }
     try {
       const vec too_small{};
-      auto res = too_small.at(5);
+      too_small.at(5);
+      assert(false);
     } catch (const std::out_of_range &) {
     } catch (...) {
       assert(false);
