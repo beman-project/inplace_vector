@@ -32,6 +32,7 @@ template <typename T> constexpr void test() {
                              typename vec::const_reference>::value,
                 "");
   assert(front == T(1));
+  (void)front;
 
   auto &&const_front = const_range.front();
   static_assert(
