@@ -1,7 +1,15 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 #include <beman/inplace_vector/inplace_vector.hpp>
+#include <type_traits>
 
 using namespace beman::inplace_vector;
+
+struct NonTrivial {
+  int z = 5;
+
+  bool operator==(NonTrivial const &other) { return this->z == other.z; }
+};
+static_assert(!std::is_trivial_v<NonTrivial>);
 
 template <typename T> constexpr void test() {
   using vec = inplace_vector<T, 42>;
@@ -82,8 +90,19 @@ void test_exceptions() {
     }
   }
 }
+
+template <typename T> void test_const() {
+  inplace_vector<const T, 20> vec;
+  vec.push_back({50});
+  const T &first = vec.front();
+  assert(first == T{50});
+}
+
 int main() {
   test<int>();
   test_exceptions();
+
+  test_const<int>();
+  test_const<NonTrivial>();
   return 0;
 }
