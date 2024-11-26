@@ -63,7 +63,7 @@ template <typename T, std::size_t Capacity>
 struct inplace_vector_type_based_storage {
   using array_type = If<!std::is_const_v<T>, std::array<T, Capacity>,
                         const std::array<std::remove_const_t<T>, Capacity>>;
-  array_type elems{};
+  array_type elems;
 
   constexpr T *begin() { return elems.data(); }
   constexpr const T *begin() const { return elems.data(); }
