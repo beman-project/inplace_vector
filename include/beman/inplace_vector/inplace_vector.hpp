@@ -69,8 +69,8 @@ struct inplace_vector_type_based_storage {
   constexpr const T *begin() const { return elems.data(); }
 };
 
-// byte array based storage is used for non-constexpr environment, where default
-// initialization may not be available.
+// byte based storage is used for non-constexpr environment. Objects of type T are only
+// constructed when needed and they don't even have to be default constructible. 
 //
 // Selecting this storage type implies: !std::is_trivial_v<T> and Capacity != 0
 template <typename T, std::size_t Capacity>
