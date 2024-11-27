@@ -33,7 +33,7 @@ repos:
       - id: markdownlint
 
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.1.0
+    rev: v2.3.0
     hooks:
       - id: codespell
         files: ^.*\.(cmake|cpp|hpp|txt|md|json|in|yaml|yml)$
