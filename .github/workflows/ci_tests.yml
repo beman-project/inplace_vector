@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [ubuntu-latest]
+        platform: [ubuntu-24.04]
         compiler:
           - cpp: g++
             c: gcc
@@ -46,8 +46,6 @@ jobs:
           - description: "ASan"
             args: "-DCMAKE_CXX_FLAGS='-fsanitize=address -fsanitize=undefined'"
         include:
-          # Needs C++ 20 as C++17 selectivly disables ranges and concepts
-          # related functionalities
           - platform: ubuntu-latest
             compiler:
               cpp: g++
@@ -74,7 +72,21 @@ jobs:
         with:
           cmakeVersion: "~3.25.0"
           ninjaVersion: "^1.11.1"
-      - name: Print installed software
+      - name: Install latest compiler
+        run: |
+          # Install gcc-14
+          sudo apt-get update
+          sudo apt-get install -y gcc-14 g++-14
+
+          sudo rm /usr/bin/gcc
+          sudo ln -s /usr/bin/gcc-14 /usr/bin/gcc
+
+          sudo rm /usr/bin/g++
+          sudo ln -s /usr/bin/g++-14 /usr/bin/g++
+
+          # Install llvm
+          sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
+      - name: Print installed softwares
         run: |
           clang++ --version
           g++ --version
