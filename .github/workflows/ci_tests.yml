@@ -74,7 +74,7 @@ jobs:
           ninjaVersion: "^1.11.1"
       - name: Install latest compiler
         run: |
-          if ["${{ matrix.compiler.cpp}}" == "g++"]; then
+          if [ "${{ matrix.compiler.cpp}}" == "g++" ]; then
             # Install gcc-14
             sudo apt-get update
             sudo apt-get install -y gcc-14 g++-14
