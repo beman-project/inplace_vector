@@ -286,7 +286,7 @@ Software.
 // TODO River: Disabled temporarily
 #define __IV_EXPECT(__EXPR)
 
-/* River: I don't think this is needed anymore??
+/*
 // BUGBUG workaround for libstdc++ not providing from_range_t / from_range yet
 namespace std {
 #if defined(__GLIBCXX__) || defined(__GLIBCPP__)
@@ -295,6 +295,13 @@ inline constexpr from_range_t from_range;
 #endif
 }; // namespace std
 */
+
+// TODO(River): using namespace std below, we need to specifiy
+// beman::from_range_t
+namespace beman {
+struct from_range_t {};
+inline constexpr from_range_t from_range;
+}; // namespace beman
 
 // Private utilites
 namespace beman::__iv_detail {
