@@ -1,3 +1,5 @@
+#pragma GCC diagnostic ignored "-Wsign-compare"
+
 /// \file
 ///
 /// Test for inline_vector
@@ -211,9 +213,11 @@ template <typename T, std::size_t N> constexpr void test_il_assignment() {
   for (size_t i = 0; i < N; ++i)
     CHECK(v[i] == T(i));
   if !consteval {
-    CHECK_THROWS(
-        ([&] { const vector<T, N> x = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}; }()),
-        std::bad_alloc);
+    CHECK_THROWS(([&] {
+                   [[maybe_unused]] const vector<T, N> x = {0, 1, 2, 3, 4, 5,
+                                                            6, 7, 8, 9, 10};
+                 }()),
+                 std::bad_alloc);
   }
 }
 
@@ -360,7 +364,7 @@ int main() {
     CHECK(a.size() == std::size_t(10));
     CHECK(!a.empty());
     CHECK_THROWS(a.push_back(0), std::bad_alloc);
-    CHECK((uintptr_t) nullptr == (uintptr_t)a.try_push_back(0));
+    CHECK((uintptr_t)nullptr == (uintptr_t)a.try_push_back(0));
   }
 
   { // resize copyable
@@ -758,7 +762,7 @@ int main() {
     CHECK(c.front().getd() == 3.5);
     CHECK(c.back().geti() == 3);
     CHECK(c.back().getd() == 4.5);
-    CHECK((uintptr_t) nullptr == (uintptr_t)c.try_emplace_back(2, 3.5));
+    CHECK((uintptr_t)nullptr == (uintptr_t)c.try_emplace_back(2, 3.5));
   }
   { // unchecked_emplace_back
     vector<non_copyable, 2> c;
