@@ -1,4 +1,6 @@
 #pragma once
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 /*
  * SPDX-FileCopyrightText: Copyright (c) 2023 Gonzalo Brito Gadeschi. All rights
 reserved.
