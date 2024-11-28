@@ -298,14 +298,14 @@ inline constexpr from_range_t from_range;
 }; // namespace std
 */
 
-// TODO(River): using namespace std below, we need to specifiy
+// TODO(River): using namespace std below, we need to specify
 // beman::from_range_t
 namespace beman {
 struct from_range_t {};
 inline constexpr from_range_t from_range;
 }; // namespace beman
 
-// Private utilites
+// Private utilities
 namespace beman::__iv_detail {
 
 template <class = void>
@@ -313,7 +313,7 @@ template <class = void>
 static constexpr void __assert_failure(char const *__file, int __line,
                                        char const *__msg) {
   if consteval {
-    throw __msg; // TODO: std lib implementor, do better here
+    throw __msg; // TODO: std lib implementer, do better here
   } else {
     fprintf(stderr, "%s(%d): %s\n", __file, __line, __msg);
     abort();
