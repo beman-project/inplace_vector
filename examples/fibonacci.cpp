@@ -4,7 +4,6 @@
 
 #include <beman/inplace_vector/inplace_vector.hpp>
 
-// using namespace std::inplace_vector;
 template <typename T, std::size_t N>
 using inplace_vector = beman::inplace_vector<T, N>;
 
