@@ -31,7 +31,7 @@ which dynamic memory allocations are undesired.
 
 #include <beman/inplace_vector/inplace_vector.hpp>
 
-using namespace beman::inplace_vector;
+using namespace beman;
 
 /**
  * Generates fibonacci sequence using inplace_vector.
