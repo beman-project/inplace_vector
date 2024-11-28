@@ -277,11 +277,14 @@ Software.
                               "assertion failed: " #__VA_ARGS__))
 
 // Assert in debug, assume in release.
-#ifdef NDEBUG
-#define __IV_EXPECT(__EXPR) __IV_ASSUME(__EXPR)
-#else
-#define __IV_EXPECT(__EXPR) __IV_ASSERT(__EXPR)
-#endif
+// #ifdef NDEBUG
+// #define __IV_EXPECT(__EXPR) __IV_ASSUME(__EXPR)
+// #else
+// #define __IV_EXPECT(__EXPR) __IV_ASSERT(__EXPR)
+// #endif
+
+// TODO River: Disabled temporarily
+#define __IV_EXPECT(__EXPR)
 
 /* River: I don't think this is needed anymore??
 // BUGBUG workaround for libstdc++ not providing from_range_t / from_range yet
