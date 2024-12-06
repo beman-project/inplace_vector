@@ -35,7 +35,6 @@ option(
 
 set(CPACK_GENERATOR TGZ)
 
-# includes
 include(GNUInstallDirs)
 include(CPack)
 
