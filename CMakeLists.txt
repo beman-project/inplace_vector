@@ -39,12 +39,12 @@ include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 include(CPack)
 
-add_library(beman.inplace_vector INTERFACE)
+add_library(beman_inplace_vector INTERFACE)
 # [CMAKE.LIBRARY_ALIAS]
-add_library(beman::inplace_vector ALIAS beman.inplace_vector)
+add_library(beman::beman_inplace_vector ALIAS beman_inplace_vector)
 
 target_sources(
-    beman.inplace_vector
+    beman_inplace_vector
     PUBLIC
         FILE_SET inplace_vector_public_headers
         TYPE HEADERS
@@ -53,10 +53,10 @@ target_sources(
             "${CMAKE_CURRENT_SOURCE_DIR}/include/beman/inplace_vector/inplace_vector.hpp"
 )
 set_target_properties(
-    beman.inplace_vector
+    beman_inplace_vector
     PROPERTIES VERIFY_INTERFACE_HEADER_SETS ON
 )
-target_compile_features(beman.inplace_vector INTERFACE cxx_std_23)
+target_compile_features(beman_inplace_vector INTERFACE cxx_std_23)
 
 # export cmake config package
 set(TARGET_NAME inplace_vector)
@@ -69,7 +69,7 @@ set(INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/${TARGET_NAME})
 
 # Install the InplaceVector library to the appropriate destination
 install(
-    TARGETS beman.inplace_vector
+    TARGETS beman_inplace_vector
     EXPORT ${TARGETS_EXPORT_NAME}
     FILE_SET inplace_vector_public_headers
 )

@@ -21,7 +21,7 @@ foreach(example ${ALL_EXAMPLES})
     )
     target_link_libraries(
         beman.inplace_vector.examples.${example}
-        beman::inplace_vector
+        beman::beman_inplace_vector
     )
     add_test(NAME ${example} COMMAND beman.inplace_vector.examples.${example})
 endforeach()
