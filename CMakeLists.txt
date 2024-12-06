@@ -55,12 +55,7 @@ set_target_properties(
     beman.inplace_vector
     PROPERTIES VERIFY_INTERFACE_HEADER_SETS ON
 )
-target_compile_features(
-    beman.inplace_vector
-    INTERFACE
-        "$<$<COMPILE_FEATURES:cxx_std_23>:cxx_std_23>"
-        "$<$<NOT:$<COMPILE_FEATURES:cxx_std_23>>:cxx_std_20>"
-)
+target_compile_features(beman.inplace_vector INTERFACE cxx_std_23)
 
 set(TARGET_PACKAGE_NAME ${PROJECT_NAME}-config)
 set(TARGETS_EXPORT_NAME ${PROJECT_NAME}-targets)
