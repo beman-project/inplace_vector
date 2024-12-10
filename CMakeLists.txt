@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 # cmake-format: on
 
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.25...3.31)
 
 project(
     beman.inplace_vector
@@ -12,6 +12,27 @@ project(
         "A dynamically-resizable vector with fixed capacity and embedded storage"
     LANGUAGES CXX
 )
+
+if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
+    message(FATAL_ERROR "In-source builds are not allowed!")
+endif()
+
+# Require C++20, but let a parent project ask for something higher
+if(DEFINED CMAKE_CXX_STANDARD)
+    if(CMAKE_CXX_STANDARD EQUAL 98 OR CMAKE_CXX_STANDARD LESS 20)
+        message(FATAL_ERROR "This project requires at least C++23")
+    endif()
+else()
+    set(CMAKE_CXX_STANDARD 23)
+endif()
+
+# Always enforce the language constraint
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# We don't need compiler extensions, but let a parent ask for them
+if(NOT DEFINED CMAKE_CXX_EXTENSIONS)
+    set(CMAKE_CXX_EXTENSIONS OFF)
+endif()
 
 # [CMAKE.SKIP_EXAMPLES]
 option(
@@ -27,38 +48,42 @@ option(
     ${PROJECT_IS_TOP_LEVEL}
 )
 
+set(CPACK_GENERATOR TGZ)
+
 include(GNUInstallDirs)
+include(CPack)
 
 add_library(beman.inplace_vector INTERFACE)
 # [CMAKE.LIBRARY_ALIAS]
 add_library(beman::inplace_vector ALIAS beman.inplace_vector)
 
-target_include_directories(
+target_sources(
     beman.inplace_vector
-    INTERFACE
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>
+    PUBLIC
+        FILE_SET inplace_vector_public_headers
+        TYPE HEADERS
+        BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include
+        FILES
+            "${CMAKE_CURRENT_SOURCE_DIR}/include/beman/inplace_vector/inplace_vector.hpp"
 )
+set_target_properties(
+    beman.inplace_vector
+    PROPERTIES VERIFY_INTERFACE_HEADER_SETS ON
+)
+
+set(TARGET_PACKAGE_NAME ${PROJECT_NAME}-config)
+set(TARGETS_EXPORT_NAME ${PROJECT_NAME}-targets)
+set(INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
 # Install the InplaceVector library to the appropriate destination
 install(
     TARGETS beman.inplace_vector
     EXPORT ${TARGETS_EXPORT_NAME}
-    DESTINATION
-    ${CMAKE_INSTALL_LIBDIR}
-)
-
-# Install the header files to the appropriate destination
-install(
-    DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_PROJECT_NAME}
-    FILES_MATCHING
-    PATTERN
-    "${CMAKE_CURRENT_SOURCE_DIR}/include/beman/inplace_vector/inplace_vector.hpp"
+    FILE_SET inplace_vector_public_headers
 )
 
 if(BEMAN_INPLACE_VECTOR_BUILD_TESTS)
-    include(CTest)
+    enable_testing()
     add_subdirectory(tests/beman/inplace_vector)
 endif()
 
